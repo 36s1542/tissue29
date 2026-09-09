@@ -12,7 +12,7 @@
   <!-- Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Noto+Serif+KR:wght@400;600;700&family=Playfair+Display:ital,wght@0,700;1,400&family=Special+Elite&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Noto+Serif+KR:wght@400;600;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
@@ -90,7 +90,7 @@
     .page {
       display: none;
       flex-direction: column;
-      gap: 16px;
+      gap: 14px;
       animation: fadeIn 0.4s ease-in-out forwards;
     }
 
@@ -132,7 +132,7 @@
       border-bottom: 2px solid var(--ink);
       padding: 8px;
       font-family: 'Noto Serif KR', serif;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       color: var(--ink);
       outline: none;
     }
@@ -146,7 +146,7 @@
       resize: none;
       border: 1px solid var(--ink);
       background: rgba(255, 255, 255, 0.3);
-      height: 60px;
+      height: 55px;
     }
 
     .signature-pad {
@@ -176,13 +176,13 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
-      margin-top: 6px;
+      gap: 6px;
+      margin-top: 4px;
     }
 
     .wax-seal-btn {
-      width: 75px;
-      height: 75px;
+      width: 70px;
+      height: 70px;
       border-radius: 50%;
       background: radial-gradient(circle at 30% 30%, #a81313, var(--wax-red), #4a0000);
       box-shadow: 0 6px 12px var(--shadow);
@@ -206,7 +206,7 @@
     }
 
     .wax-seal-btn i {
-      font-size: 1.6rem;
+      font-size: 1.5rem;
     }
 
     .btn-nav {
@@ -220,7 +220,7 @@
       cursor: pointer;
       letter-spacing: 1px;
       transition: all 0.2s;
-      margin-top: 8px;
+      margin-top: 6px;
     }
 
     .btn-nav:hover {
@@ -229,8 +229,8 @@
     }
 
     .webcam-box {
-      width: 220px;
-      height: 220px;
+      width: 200px;
+      height: 200px;
       margin: 0 auto;
       border: 4px solid var(--ink);
       background: #000;
@@ -246,49 +246,48 @@
       object-fit: cover;
     }
 
-    /* 최종 보고서 스타일 */
+    /* 리포트 스타일 */
     .report-paper {
       background: #d8c3a5;
       border: 2px solid var(--ink);
       padding: 16px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      position: relative;
+      gap: 10px;
     }
 
     .report-title {
       font-family: 'Cinzel', serif;
       text-align: center;
-      font-size: 1.2rem;
+      font-size: 1.15rem;
       font-weight: 900;
       border-bottom: 2px solid var(--ink);
       padding-bottom: 6px;
     }
 
     .report-row {
-      font-size: 0.88rem;
+      font-size: 0.85rem;
       display: flex;
       justify-content: space-between;
       border-bottom: 1px dashed #a3927c;
-      padding-bottom: 4px;
+      padding-bottom: 3px;
     }
 
     .report-verdict {
       border: 2px double var(--wax-red);
       background: rgba(139, 0, 0, 0.08);
-      padding: 12px;
+      padding: 10px;
       text-align: center;
     }
 
     .report-verdict-title {
       font-family: 'Cinzel', serif;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: var(--wax-red);
     }
 
     .report-verdict-value {
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       font-weight: 900;
       color: var(--wax-red);
     }
@@ -297,12 +296,12 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      margin-top: 10px;
+      margin-top: 6px;
     }
 
     .signature-img-preview {
-      max-width: 120px;
-      max-height: 50px;
+      max-width: 110px;
+      max-height: 45px;
       border-bottom: 1px solid var(--ink);
     }
 
@@ -329,7 +328,7 @@
         <span>01/05</span>
       </div>
       <div class="form-group">
-        <label>소속 기관 (학교명)</label>
+        <label>소속 기관</label>
         <input type="text" id="school" value="한영외국어고등학교" readonly>
       </div>
       <div class="form-group">
@@ -344,10 +343,10 @@
       <button class="btn-nav" onclick="nextPage(1)">다음 단서 기록 단계로 ▸</button>
     </div>
 
-    <!-- PAGE 2: 사건 증거 및 배경 -->
+    <!-- PAGE 2: 현장 목격 단서 진술 -->
     <div class="page" id="page-2">
       <div class="page-title">
-        <span>II. 사건 배경 및 정황</span>
+        <span>II. 현장 목격 단서 진술</span>
         <span>02/05</span>
       </div>
       <div class="form-group">
@@ -359,21 +358,35 @@
         </select>
       </div>
       <div class="form-group">
-        <label>사건 배경 (필수)</label>
-        <textarea id="background" placeholder="어떤 경위로 휴지 실종 사건이 발생했는지 작성하시오..."></textarea>
+        <label>현장 목격 단서 (필수)</label>
+        <select id="clue-select" onchange="toggleCustomClue()">
+          <option value="">-- 발견된 단서를 선택하십시오 --</option>
+          <option value="휴지심만 덩그러니 남음">휴지심만 덩그러니 남음</option>
+          <option value="잔여량이 조만간 소진될 것으로 보임">잔여량이 조만간 소진될 것으로 보임</option>
+          <option value="휴지가 거치대에서 무단 이탈함">휴지가 거치대에서 무단 이탈함</option>
+          <option value="custom">기타 (직접 주관식 입력)</option>
+        </select>
       </div>
-      <p class="error-text" id="err-2">사건 배경을 입력해야 합니다.</p>
-      <button class="btn-nav" onclick="nextPage(2)">용의선상 추측 단계로 ▸</button>
+      <div class="form-group" id="custom-clue-group" style="display: none;">
+        <label>주관식 단서 내용 작성</label>
+        <input type="text" id="custom-clue" placeholder="목격한 단서를 직접 적으시오">
+      </div>
+      <p class="error-text" id="err-2">현장 목격 단서를 선택하거나 입력해야 합니다.</p>
+      <button class="btn-nav" onclick="nextPage(2)">사건 경위 및 용의자 선정 단계로 ▸</button>
     </div>
 
-    <!-- PAGE 3: 용의선상 추측 선정 -->
+    <!-- PAGE 3: 사건 경위 조사 및 용의자 추측 -->
     <div class="page" id="page-3">
       <div class="page-title">
-        <span>III. 용의선상 추측 선정</span>
+        <span>III. 사건 경위 및 용의자 선정</span>
         <span>03/05</span>
       </div>
       <div class="form-group">
-        <label>유력 유죄 의심 용의자 (필수)</label>
+        <label>사건 상세 경위 (필수)</label>
+        <textarea id="case-details" placeholder="어떤 정황으로 본 사건을 의뢰하게 되었는지 적으시오..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>유력 의심 용의자 (필수)</label>
         <select id="suspect">
           <option value="">-- 의심 인물을 선택하십시오 --</option>
           <option value="쉬는시간 대량 사용 학생">쉬는시간 대량 사용 학생</option>
@@ -383,10 +396,10 @@
         </select>
       </div>
       <div class="form-group">
-        <label>용의선상 추론 이유 (필수)</label>
-        <textarea id="suspect-reason" placeholder="해당 인물을 의심하는 이유와 정황을 적으시오..."></textarea>
+        <label>용의선상 선정 이유 (필수)</label>
+        <textarea id="suspect-reason" placeholder="해당 인물/대상을 의심하는 이유를 적으시오..."></textarea>
       </div>
-      <p class="error-text" id="err-3">용의자와 추론 이유를 작성해야 합니다.</p>
+      <p class="error-text" id="err-3">사건 경위와 용의자 정보 및 사유를 모두 작성해야 합니다.</p>
       <button class="btn-nav" onclick="nextPage(3)">서명 및 실링왁스로 ▸</button>
     </div>
 
@@ -432,7 +445,7 @@
       <button class="btn-nav" onclick="generateReport()">최종 탐정 보고서 발급 ▸</button>
     </div>
 
-    <!-- PAGE 6: 최종 보고서 (마지막 장) -->
+    <!-- PAGE 6: 최종 보고서 -->
     <div class="page" id="page-6">
       <div class="report-paper">
         <div class="report-title">FINAL INVESTIGATION REPORT</div>
@@ -446,12 +459,20 @@
           <span id="rep-location">-</span>
         </div>
         <div class="report-row">
+          <span>목격 단서:</span>
+          <span id="rep-clue" style="max-width:200px; text-align:right;">-</span>
+        </div>
+        <div class="report-row">
+          <span>사건 경위:</span>
+          <span id="rep-details" style="max-width:200px; text-align:right; font-size:0.75rem;">-</span>
+        </div>
+        <div class="report-row">
           <span>주요 용의자:</span>
           <span id="rep-suspect">-</span>
         </div>
         <div class="report-row">
-          <span>용의선상 사유:</span>
-          <span id="rep-reason" style="font-size:0.78rem; text-align:right; max-width:200px;">-</span>
+          <span>선정 사유:</span>
+          <span id="rep-reason" style="max-width:200px; text-align:right; font-size:0.75rem;">-</span>
         </div>
 
         <div class="report-verdict">
@@ -461,12 +482,12 @@
 
         <div class="report-stamp-zone">
           <div>
-            <div style="font-size:0.7rem; color:#555;">CLIENT SIGNATURE</div>
+            <div style="font-size:0.68rem; color:#555;">CLIENT SIGNATURE</div>
             <img id="rep-sig-img" class="signature-img-preview" alt="서명">
           </div>
           <div style="text-align:center;">
-            <div style="font-size:0.7rem; color:#555; margin-bottom:2px;">OFFICIAL SEAL</div>
-            <div style="width:45px; height:45px; border-radius:50%; background:var(--wax-red); color:var(--gold-accent); display:flex; align-items:center; justify-content:center; margin:0 auto; font-size:1rem; border:2px solid var(--gold-accent);">
+            <div style="font-size:0.68rem; color:#555; margin-bottom:2px;">OFFICIAL SEAL</div>
+            <div style="width:40px; height:40px; border-radius:50%; background:var(--wax-red); color:var(--gold-accent); display:flex; align-items:center; justify-content:center; margin:0 auto; font-size:0.9rem; border:2px solid var(--gold-accent);">
               <i class="fa-solid fa-crown"></i>
             </div>
           </div>
@@ -528,6 +549,16 @@
       status.style.fontWeight = "bold";
     }
 
+    function toggleCustomClue() {
+      const select = document.getElementById("clue-select");
+      const customGroup = document.getElementById("custom-clue-group");
+      if (select.value === "custom") {
+        customGroup.style.display = "flex";
+      } else {
+        customGroup.style.display = "none";
+      }
+    }
+
     function nextPage(currentPage) {
       document.querySelectorAll(".error-text").forEach(e => e.style.display = "none");
 
@@ -539,15 +570,17 @@
           return;
         }
       } else if (currentPage === 2) {
-        const bg = document.getElementById("background").value.trim();
-        if (!bg) {
+        const selectVal = document.getElementById("clue-select").value;
+        const customVal = document.getElementById("custom-clue").value.trim();
+        if (!selectVal || (selectVal === "custom" && !customVal)) {
           document.getElementById("err-2").style.display = "block";
           return;
         }
       } else if (currentPage === 3) {
+        const details = document.getElementById("case-details").value.trim();
         const suspect = document.getElementById("suspect").value;
         const reason = document.getElementById("suspect-reason").value.trim();
-        if (!suspect || !reason) {
+        if (!details || !suspect || !reason) {
           document.getElementById("err-3").style.display = "block";
           return;
         }
@@ -574,7 +607,7 @@
         model = await tmImage.load(MODEL_URL + "model.json", MODEL_URL + "metadata.json");
         maxPredictions = model.getTotalClasses();
 
-        webcam = new tmImage.Webcam(220, 220, true);
+        webcam = new tmImage.Webcam(200, 200, true);
         await webcam.setup();
         await webcam.play();
 
@@ -619,18 +652,22 @@
       document.getElementById("page-5").classList.remove("active");
       document.getElementById("page-6").classList.add("active");
 
-      // 정보 채우기
+      // 데이터 정리
       const id = document.getElementById("student-id").value;
       const name = document.getElementById("student-name").value;
+      const clueSelect = document.getElementById("clue-select").value;
+      const clueText = (clueSelect === "custom") ? document.getElementById("custom-clue").value : clueSelect;
+
       document.getElementById("rep-client").innerText = `${id} ${name}`;
       document.getElementById("rep-location").innerText = document.getElementById("location").value;
+      document.getElementById("rep-clue").innerText = clueText;
+      document.getElementById("rep-details").innerText = document.getElementById("case-details").value;
       document.getElementById("rep-suspect").innerText = document.getElementById("suspect").value;
       document.getElementById("rep-reason").innerText = document.getElementById("suspect-reason").value;
       document.getElementById("rep-verdict").innerText = finalVerdictText;
 
-      // 서명 데이터 이미지 전송
-      const dataUrl = sigCanvas.toDataURL();
-      document.getElementById("rep-sig-img").src = dataUrl;
+      // 서명 이미지 삽입
+      document.getElementById("rep-sig-img").src = sigCanvas.toDataURL();
     }
   </script>
 </body>

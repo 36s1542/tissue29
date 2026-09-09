@@ -3,33 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>프로젝트 휴지 - 실시간 AI 판별</title>
+  <title>프로젝트 휴지 - 실시간 판별 체험</title>
 
   <!-- TensorFlow.js & Teachable Machine -->
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8.3/dist/teachablemachine-image.min.js"></script>
 
-  <!-- Google Fonts & FontAwesome Icons -->
+  <!-- Google Fonts: Cinzel (영국 고풍 서체) & Noto Serif KR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Noto+Serif+KR:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
     :root {
-      --primary-color: #059669;
-      --primary-hover: #047857;
-      --primary-light: #ecfdf5;
-      --danger-color: #ef4444;
-      --danger-hover: #dc2626;
-      --bg-color: #f1f5f9;
-      --card-bg: #ffffff;
-      --text-main: #0f172a;
-      --text-sub: #475569;
-      --border-color: #e2e8f0;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
-      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --vintage-bg: #1a1614;
+      --paper-bg: #f4eae1;
+      --card-bg: #221c19;
+      --border-gold: #c5a059;
+      --border-gold-dark: #8c6d37;
+      --text-gold: #dfb76c;
+      --text-paper: #2b231d;
+      --text-muted: #a39585;
+      --accent-red: #801818;
+      --accent-green: #1c4a2a;
+      --shadow-vintage: 0 10px 25px rgba(0, 0, 0, 0.7), inset 0 0 15px rgba(0,0,0,0.5);
     }
 
     * {
@@ -39,117 +37,139 @@
     }
 
     body {
-      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-      line-height: 1.5;
-      color: var(--text-main);
-      background: linear-gradient(135deg, #e2e8f0 0%, #f8fafc 100%);
+      font-family: 'Noto Serif KR', serif;
+      line-height: 1.6;
+      color: var(--text-paper);
+      background-color: var(--vintage-bg);
+      background-image: 
+        radial-gradient(circle at 50% 30%, rgba(34, 28, 25, 0.8), rgba(15, 12, 10, 0.95)),
+        url('https://www.transparenttextures.com/patterns/dark-wood.png');
       min-height: 100vh;
-      padding: 24px 16px;
+      padding: 30px 16px;
     }
 
     .container {
-      max-width: 480px;
+      max-width: 520px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 22px;
     }
 
-    /* 카드 스타일 공통 */
+    /* 클래식 양장본 카드 공통 */
     .card {
-      background-color: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: var(--shadow-md);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      background-color: var(--paper-bg);
+      background-image: url('https://www.transparenttextures.com/patterns/aged-paper.png');
+      border: 2px solid var(--border-gold);
+      border-radius: 4px;
+      padding: 24px;
+      box-shadow: var(--shadow-vintage);
+      position: relative;
     }
 
-    /* 헤더 */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 4px; left: 4px; right: 4px; bottom: 4px;
+      border: 1px solid var(--border-gold-dark);
+      pointer-events: none;
+    }
+
+    /* 헤더 디자인 */
     header.card {
       text-align: center;
-      background: linear-gradient(135deg, #059669 0%, #10b981 100%);
-      color: #ffffff;
-      border: none;
-      padding: 28px 20px;
+      background: #2a0808;
+      background-image: linear-gradient(135deg, #3d0c0c 0%, #1a0404 100%);
+      color: var(--text-gold);
+      border-color: var(--border-gold);
+      padding: 32px 20px;
     }
 
     header h1 {
-      font-size: 1.6rem;
+      font-family: 'Cinzel', serif;
+      font-size: 1.8rem;
       font-weight: 700;
-      letter-spacing: -0.5px;
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+
+    header h1 i {
+      color: var(--border-gold);
+      margin: 0 8px;
     }
 
     header .subtitle {
       font-size: 0.9rem;
-      color: rgba(255, 255, 255, 0.9);
-      font-weight: 400;
+      color: var(--text-muted);
+      font-style: italic;
       word-break: keep-all;
     }
 
-    /* 정보 세션 */
+    /* 정보 목록 */
     .info-list {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       font-size: 0.92rem;
     }
 
     .info-item {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       align-items: flex-start;
-      color: var(--text-sub);
+      color: var(--text-paper);
     }
 
     .info-item i {
-      color: var(--primary-color);
-      margin-top: 3px;
-      font-size: 0.9rem;
+      color: var(--accent-red);
+      margin-top: 4px;
+      font-size: 1rem;
     }
 
     .bold {
-      font-weight: 600;
-      color: var(--text-main);
+      font-weight: 700;
+      color: #1a0404;
     }
 
     /* 체험 구역 카드 */
     .experience-card {
-      border: 2px solid var(--primary-color);
-      position: relative;
+      background-color: var(--card-bg);
+      background-image: url('https://www.transparenttextures.com/patterns/black-paper.png');
+      color: var(--text-gold);
+      border: 3px double var(--border-gold);
+    }
+
+    .experience-card::before {
+      border-color: rgba(197, 160, 89, 0.3);
     }
 
     .experience-title {
-      font-size: 1.15rem;
-      color: var(--primary-color);
-      margin-bottom: 16px;
+      font-family: 'Cinzel', serif;
+      font-size: 1.25rem;
+      color: var(--text-gold);
+      margin-bottom: 20px;
       text-align: center;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
+      letter-spacing: 1px;
+      border-bottom: 1px solid var(--border-gold-dark);
+      padding-bottom: 10px;
     }
 
-    /* 웹캠 컨테이너 */
+    /* 웹캠 컨테이너 - 탐정 렌즈 효과 */
     .webcam-container {
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      max-width: 300px;
-      margin: 0 auto 16px auto;
-      background-color: #f1f5f9;
-      border-radius: 16px;
+      width: 260px;
+      height: 260px;
+      margin: 0 auto 20px auto;
+      background-color: #0f0c0a;
+      border-radius: 50%;
+      border: 6px solid var(--border-gold);
+      box-shadow: 0 0 20px rgba(0,0,0,0.9), inset 0 0 15px rgba(0,0,0,0.8);
       overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
-      border: 2px dashed #cbd5e1;
     }
 
     .webcam-container canvas {
@@ -162,172 +182,176 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
-      color: #94a3b8;
+      gap: 10px;
+      color: var(--text-muted);
       text-align: center;
       padding: 20px;
     }
 
     .placeholder-content i {
-      font-size: 2.5rem;
+      font-size: 2.2rem;
+      color: var(--border-gold-dark);
     }
 
     .placeholder-text {
-      font-size: 0.88rem;
-      font-weight: 500;
+      font-size: 0.85rem;
       word-break: keep-all;
     }
 
-    /* 버튼 그룹 */
+    /* 컨트롤 버튼 (빈티지 왁스/버튼 스타일) */
     .btn-group {
       display: flex;
-      gap: 10px;
-      margin-bottom: 12px;
+      gap: 12px;
+      margin-bottom: 16px;
     }
 
     .btn {
       flex: 1;
       padding: 12px 16px;
+      font-family: 'Cinzel', 'Noto Serif KR', serif;
       font-size: 0.95rem;
-      font-weight: 600;
-      border: none;
-      border-radius: 12px;
+      font-weight: 700;
+      border: 1px solid var(--border-gold);
+      border-radius: 2px;
       cursor: pointer;
       min-height: 48px;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
+      letter-spacing: 1px;
       transition: all 0.2s ease;
-      box-shadow: var(--shadow-sm);
+      text-transform: uppercase;
     }
 
     .btn-start {
-      background-color: var(--primary-color);
-      color: #ffffff;
+      background: linear-gradient(180deg, #2a5a35 0%, #14331d 100%);
+      color: var(--text-gold);
     }
 
     .btn-start:hover:not(:disabled) {
-      background-color: var(--primary-hover);
-      transform: translateY(-1px);
-      box-shadow: var(--shadow-md);
+      background: linear-gradient(180deg, #357042 0%, #1a4226 100%);
+      box-shadow: 0 0 10px rgba(197, 160, 89, 0.4);
     }
 
     .btn-start:disabled {
-      background-color: #a7f3d0;
-      color: #065f46;
+      background: #223326;
+      color: #556658;
+      border-color: #445547;
       cursor: not-allowed;
-      box-shadow: none;
     }
 
     .btn-stop {
-      background-color: var(--danger-color);
-      color: #ffffff;
+      background: linear-gradient(180deg, #6e1c1c 0%, #420f0f 100%);
+      color: var(--text-gold);
     }
 
     .btn-stop:hover:not(:disabled) {
-      background-color: var(--danger-hover);
-      transform: translateY(-1px);
-      box-shadow: var(--shadow-md);
+      background: linear-gradient(180deg, #872525 0%, #541515 100%);
+      box-shadow: 0 0 10px rgba(197, 160, 89, 0.4);
     }
 
     .btn-stop:disabled {
-      background-color: #fecaca;
-      color: #991b1b;
+      background: #3b1e1e;
+      color: #614343;
+      border-color: #4a2e2e;
       cursor: not-allowed;
-      box-shadow: none;
     }
 
-    /* 상태/오류 메시지 */
+    /* 상태 메시지 */
     .status-message {
       text-align: center;
       font-size: 0.88rem;
-      font-weight: 600;
-      color: #2563eb;
-      min-height: 20px;
-      margin-bottom: 12px;
+      color: var(--text-gold);
+      min-height: 24px;
+      margin-bottom: 16px;
+      font-style: italic;
     }
 
     .error-message {
-      color: #991b1b;
-      background-color: #fef2f2;
-      border: 1px solid #fecaca;
-      border-radius: 10px;
-      padding: 10px 14px;
-      margin-bottom: 12px;
+      color: #ffb3b3;
+      background-color: #421313;
+      border: 1px solid var(--accent-red);
+      border-radius: 4px;
+      padding: 10px;
+      margin-bottom: 16px;
       font-size: 0.85rem;
       display: none;
-      word-break: keep-all;
     }
 
-    /* 결과 박스 */
+    /* 판별 결과 고풍스러운羊皮紙 패널 */
     .top-result-box {
-      background: var(--primary-light);
-      border-radius: 14px;
+      background-color: var(--paper-bg);
+      background-image: url('https://www.transparenttextures.com/patterns/aged-paper.png');
+      border: 1px solid var(--border-gold);
+      border-radius: 2px;
       padding: 14px;
       text-align: center;
-      margin-bottom: 16px;
-      border: 1px solid #a7f3d0;
+      margin-bottom: 18px;
+      color: var(--text-paper);
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
     }
 
     .top-result-label {
-      font-size: 0.8rem;
-      color: #065f46;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      color: #594734;
+      font-weight: 700;
+      letter-spacing: 1px;
     }
 
     .top-result-value {
-      font-size: 1.35rem;
+      font-size: 1.4rem;
       font-weight: 700;
-      color: #047857;
-      margin: 2px 0;
+      color: var(--accent-red);
+      margin: 4px 0;
+      font-family: 'Cinzel', 'Noto Serif KR', serif;
     }
 
     .disclaimer {
       font-size: 0.72rem;
-      color: #047857;
-      opacity: 0.8;
+      color: #70604f;
+      font-style: italic;
     }
 
-    /* 프로그레스 바 레이아웃 */
+    /* 게이지 프로그레스 바 */
     .label-container {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
     }
 
     .label-row {
       display: flex;
       flex-direction: column;
       gap: 4px;
-      background-color: #f8fafc;
-      padding: 8px 12px;
-      border-radius: 10px;
-      border: 1px solid var(--border-color);
+      background: rgba(0, 0, 0, 0.4);
+      padding: 10px;
+      border: 1px solid rgba(197, 160, 89, 0.3);
+      border-radius: 2px;
     }
 
     .label-info {
       display: flex;
       justify-content: space-between;
       font-size: 0.88rem;
-      font-weight: 600;
+      color: var(--text-gold);
+      font-family: 'Cinzel', 'Noto Serif KR', serif;
     }
 
     .progress-bar-bg {
       width: 100%;
       height: 10px;
-      background-color: #e2e8f0;
-      border-radius: 5px;
+      background-color: #120e0c;
+      border: 1px solid var(--border-gold-dark);
+      border-radius: 2px;
       overflow: hidden;
     }
 
     .progress-bar-fill {
       height: 100%;
       width: 0%;
-      background-color: var(--primary-color);
-      border-radius: 5px;
+      background: linear-gradient(90deg, #8c6d37 0%, #dfb76c 100%);
       transition: width 0.15s ease-out;
     }
 
@@ -335,12 +359,13 @@
     footer.footer-info {
       text-align: center;
       font-size: 0.82rem;
-      color: var(--text-sub);
-      padding: 12px 0;
-      border-top: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding-top: 14px;
+      border-top: 1px dashed var(--border-gold-dark);
       display: flex;
       justify-content: center;
       gap: 12px;
+      font-family: 'Cinzel', 'Noto Serif KR', serif;
     }
   </style>
 </head>
@@ -349,45 +374,45 @@
   <div class="container">
     <!-- 헤더 영역 -->
     <header class="card">
-      <h1><i class="fa-solid fa-toilet-paper"></i> 프로젝트 휴지</h1>
-      <p class="subtitle">화장실 휴지 부족 문제를 해결하기 위한 실시간 AI 판별 모델</p>
+      <h1><i class="fa-solid fa-scroll"></i> PROJECT TISSUE <i class="fa-solid fa-scroll"></i></h1>
+      <p class="subtitle">런던 한영외고 화장실의 휴지 부족 사건을 해결할 실시간 AI 감정서</p>
     </header>
 
-    <!-- 모델 안내 카드 -->
+    <!-- 사건 정보 카드 -->
     <section class="card">
       <div class="info-list">
         <div class="info-item">
-          <i class="fa-solid fa-circle-exclamation"></i>
-          <div><span class="bold">해결하려는 문제:</span> 화장실 휴지 부족 현상 예방</div>
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <div><span class="bold">해결할 사건:</span> 화장실 내 휴지 고갈 현상 예방</div>
         </div>
         <div class="info-item">
-          <i class="fa-solid fa-user-check"></i>
-          <div><span class="bold">주요 사용자:</span> 한영외고 화장실 관리자</div>
+          <i class="fa-solid fa-user-secret"></i>
+          <div><span class="bold">의뢰인:</span> 한영외고 화장실 총괄 관리자</div>
         </div>
         <div class="info-item">
-          <i class="fa-solid fa-robot"></i>
-          <div><span class="bold">모델 역할:</span> 휴지 유무를 AI가 판단하여 관리자의 상태 모니터링 보조</div>
+          <i class="fa-solid fa-compass"></i>
+          <div><span class="bold">탐정 AI의 역할:</span> 카메라 조준을 통해 잔여 휴지 유무를 추론 판단</div>
         </div>
       </div>
     </section>
 
-    <!-- 메인 체험 구역 -->
+    <!-- 메인 감정 체험 구역 -->
     <main class="card experience-card">
-      <h2 class="experience-title"><i class="fa-solid fa-camera"></i> 모델 실시간 체험하기</h2>
+      <h2 class="experience-title"><i class="fa-solid fa-eye"></i> Real-Time Inspection</h2>
 
       <div class="webcam-container" id="webcam-container">
         <div class="placeholder-content" id="placeholder-text">
-          <i class="fa-solid fa-video-slash"></i>
-          <span class="placeholder-text">아래 '시작' 버튼을 누르면 카메라가 실행됩니다.</span>
+          <i class="fa-solid fa-hat-cowboy-side"></i>
+          <span class="placeholder-text">관찰을 시작하려면 아래 버튼을 누르십시오.</span>
         </div>
       </div>
 
       <div class="btn-group">
         <button id="start-btn" class="btn btn-start" onclick="init()">
-          <i class="fa-solid fa-play"></i> 시작
+          <i class="fa-solid fa-play"></i> 관찰 시작
         </button>
         <button id="stop-btn" class="btn btn-stop" onclick="stop()" disabled>
-          <i class="fa-solid fa-stop"></i> 중지
+          <i class="fa-solid fa-pause"></i> 중지
         </button>
       </div>
 
@@ -395,33 +420,33 @@
       <div id="error-message" class="error-message"></div>
 
       <div class="top-result-box">
-        <div class="top-result-label">현재 판단 결과</div>
+        <div class="top-result-label">CURRENT DEDUCTION (최종 추론)</div>
         <div class="top-result-value" id="top-result-text">-</div>
-        <div class="disclaimer">* AI 판단 결과가 100% 정확하지 않을 수 있습니다.</div>
+        <div class="disclaimer">* AI의 추론 확률이 항상 완벽한 진실은 아닙니다.</div>
       </div>
 
       <div id="label-container" class="label-container"></div>
     </main>
 
-    <!-- 한계점 및 주의사항 -->
+    <!-- 추론 한계 및 탐정 단서 -->
     <section class="card">
       <div class="info-list">
         <div class="info-item">
-          <i class="fa-solid fa-triangle-exclamation" style="color: #eab308;"></i>
-          <div><span class="bold">모델 한계:</span> 휴지통 아래로 늘어뜨려진 부분이 없는 경우 오판할 수 있습니다.</div>
+          <i class="fa-solid fa-mask"></i>
+          <div><span class="bold">추론의 한계:</span> 휴지가 아래로 늘어뜨려져 있지 않은 경우 오류가 발생할 수 있습니다.</div>
         </div>
         <div class="info-item">
-          <i class="fa-solid fa-eye" style="color: #2563eb;"></i>
-          <div><span class="bold">사람이 확인해야 할 부분:</span> 결과가 모호할 땐 직접 휴지통 내부를 교차 확인해 주세요.</div>
+          <i class="fa-solid fa-feather-pointed"></i>
+          <div><span class="bold">현장 교차 검증:</span> 기계의 판단에만 의존하지 마시고, 직접 휴지함 내부를 수색하세요.</div>
         </div>
       </div>
     </section>
 
     <!-- 푸터 -->
     <footer class="footer-info">
-      <div><span class="bold">팀명:</span> 팀 휴지</div>
-      <div>|</div>
-      <div><span class="bold">팀원:</span> 정태연, 조수현, 최다흔</div>
+      <div><span class="bold">TEAM:</span> 팀 휴지</div>
+      <div>•</div>
+      <div><span class="bold">MEMBERS:</span> 정태연, 조수현, 최다흔</div>
     </footer>
   </div>
 
@@ -448,7 +473,7 @@
 
       resetError();
       startBtn.disabled = true;
-      statusMsg.innerText = "AI 모델을 로딩하고 있습니다...";
+      statusMsg.innerText = "고서적 단서(AI 모델)를 분석하는 중입니다...";
 
       const modelURL = URL + "model.json";
       const metadataURL = URL + "metadata.json";
@@ -457,18 +482,17 @@
         model = await tmImage.load(modelURL, metadataURL);
         maxPredictions = model.getTotalClasses();
 
-        statusMsg.innerText = "카메라 권한을 확인 중입니다...";
+        statusMsg.innerText = "렌즈(카메라) 권한을 승인 요청 중입니다...";
 
         const flip = true;
-        webcam = new tmImage.Webcam(300, 300, flip);
+        webcam = new tmImage.Webcam(260, 260, flip);
         await webcam.setup(); 
         await webcam.play();
 
         isRunning = true;
         stopBtn.disabled = false;
-        statusMsg.innerText = "🟢 실시간 감지 중";
+        statusMsg.innerText = "🔍 실시간 관찰 분석 진행 중...";
         placeholderText.style.display = "none";
-        webcamContainer.style.border = "none";
 
         const canvas = webcam.canvas;
         if (!webcamContainer.contains(canvas)) {
@@ -514,7 +538,7 @@
         loop();
 
       } catch (err) {
-        showError("모델을 불러오지 못했거나 카메라 사용이 거부되었습니다. 카메라 권한과 인터넷 연결을 확인해 주세요.");
+        showError("단서를 불러오지 못했거나 렌즈 접근이 거부되었습니다. 권한과 네트워크를 확인해 주십시오.");
         stop();
       }
     }
@@ -572,10 +596,9 @@
       }
 
       placeholderText.style.display = "flex";
-      webcamContainer.style.border = "2px dashed #cbd5e1";
       startBtn.disabled = false;
       stopBtn.disabled = true;
-      statusMsg.innerText = "중지되었습니다.";
+      statusMsg.innerText = "관찰이 일시 중단되었습니다.";
       topResultText.innerText = "-";
       
       const labelContainer = document.getElementById("label-container");

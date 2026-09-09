@@ -3,13 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>프로젝트 휴지 - 실시간 판별 체험</title>
+  <title>프로젝트 휴지 - 실시간 AI 판별</title>
 
+  <!-- TensorFlow.js & Teachable Machine -->
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8.3/dist/teachablemachine-image.min.js"></script>
 
+  <!-- Google Fonts & FontAwesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <style>
-    /* 기본 스타일 초기화 및 모바일 우선 반응형 설정 */
+    :root {
+      --primary-color: #059669;
+      --primary-hover: #047857;
+      --primary-light: #ecfdf5;
+      --danger-color: #ef4444;
+      --danger-hover: #dc2626;
+      --bg-color: #f1f5f9;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-sub: #475569;
+      --border-color: #e2e8f0;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -17,82 +39,117 @@
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      line-height: 1.6;
-      color: #212529;
-      background-color: #f8f9fa;
-      padding: 16px;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      line-height: 1.5;
+      color: var(--text-main);
+      background: linear-gradient(135deg, #e2e8f0 0%, #f8fafc 100%);
+      min-height: 100vh;
+      padding: 24px 16px;
     }
 
     .container {
-      max-width: 600px;
+      max-width: 480px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 16px;
     }
 
     /* 카드 스타일 공통 */
     .card {
-      background-color: #ffffff;
-      border: 1px solid #e9ecef;
-      border-radius: 12px;
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
       padding: 20px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      box-shadow: var(--shadow-md);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    /* 텍스트 스타일 */
-    h1 {
+    /* 헤더 */
+    header.card {
+      text-align: center;
+      background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+      color: #ffffff;
+      border: none;
+      padding: 28px 20px;
+    }
+
+    header h1 {
       font-size: 1.6rem;
-      color: #0f5132;
-      margin-bottom: 8px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
 
-    .subtitle {
-      font-size: 1rem;
-      color: #495057;
-      font-weight: 500;
+    header .subtitle {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 400;
+      word-break: keep-all;
     }
 
-    p {
-      margin-bottom: 8px;
-      font-size: 0.95rem;
+    /* 정보 세션 */
+    .info-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 0.92rem;
     }
 
-    p:last-child {
-      margin-bottom: 0;
+    .info-item {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      color: var(--text-sub);
+    }
+
+    .info-item i {
+      color: var(--primary-color);
+      margin-top: 3px;
+      font-size: 0.9rem;
     }
 
     .bold {
       font-weight: 600;
+      color: var(--text-main);
     }
 
-    /* 주요 체험 구역 강조 */
+    /* 체험 구역 카드 */
     .experience-card {
-      border: 2px solid #198754;
-      background-color: #ffffff;
+      border: 2px solid var(--primary-color);
+      position: relative;
     }
 
     .experience-title {
-      font-size: 1.25rem;
-      color: #198754;
-      margin-bottom: 12px;
+      font-size: 1.15rem;
+      color: var(--primary-color);
+      margin-bottom: 16px;
       text-align: center;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
 
-    /* 웹캠 화면 고정 크기 (예측 시 화면 흔들림 방지) */
+    /* 웹캠 컨테이너 */
     .webcam-container {
       width: 100%;
-      max-width: 320px;
-      height: 320px;
+      aspect-ratio: 1 / 1;
+      max-width: 300px;
       margin: 0 auto 16px auto;
-      background-color: #e9ecef;
-      border-radius: 8px;
+      background-color: #f1f5f9;
+      border-radius: 16px;
       overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
+      border: 2px dashed #cbd5e1;
     }
 
     .webcam-container canvas {
@@ -101,193 +158,270 @@
       object-fit: cover;
     }
 
-    .placeholder-text {
-      color: #6c757d;
-      font-size: 0.9rem;
+    .placeholder-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      color: #94a3b8;
       text-align: center;
-      padding: 10px;
+      padding: 20px;
     }
 
-    /* 컨트롤 버튼 */
+    .placeholder-content i {
+      font-size: 2.5rem;
+    }
+
+    .placeholder-text {
+      font-size: 0.88rem;
+      font-weight: 500;
+      word-break: keep-all;
+    }
+
+    /* 버튼 그룹 */
     .btn-group {
       display: flex;
       gap: 10px;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
 
     .btn {
       flex: 1;
-      padding: 14px 16px;
-      font-size: 1rem;
+      padding: 12px 16px;
+      font-size: 0.95rem;
       font-weight: 600;
       border: none;
-      border-radius: 8px;
+      border-radius: 12px;
       cursor: pointer;
-      min-height: 48px; /* 터치에 충분한 크기 */
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
     }
 
     .btn-start {
-      background-color: #198754;
+      background-color: var(--primary-color);
       color: #ffffff;
+    }
+
+    .btn-start:hover:not(:disabled) {
+      background-color: var(--primary-hover);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
     }
 
     .btn-start:disabled {
-      background-color: #a3cfbb;
+      background-color: #a7f3d0;
+      color: #065f46;
       cursor: not-allowed;
+      box-shadow: none;
     }
 
     .btn-stop {
-      background-color: #dc3545;
+      background-color: var(--danger-color);
       color: #ffffff;
     }
 
-    .btn-stop:disabled {
-      background-color: #f1aeb5;
-      cursor: not-allowed;
+    .btn-stop:hover:not(:disabled) {
+      background-color: var(--danger-hover);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
     }
 
-    /* 상태 및 오류 메시지 */
+    .btn-stop:disabled {
+      background-color: #fecaca;
+      color: #991b1b;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* 상태/오류 메시지 */
     .status-message {
       text-align: center;
-      font-size: 0.9rem;
-      font-weight: 500;
-      color: #0d6efd;
-      min-height: 24px;
-      margin-bottom: 16px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #2563eb;
+      min-height: 20px;
+      margin-bottom: 12px;
     }
 
     .error-message {
-      color: #842029;
-      background-color: #f8d7da;
-      border: 1px solid #f5c2c7;
-      border-radius: 6px;
-      padding: 10px;
-      margin-bottom: 16px;
-      font-size: 0.88rem;
+      color: #991b1b;
+      background-color: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      font-size: 0.85rem;
       display: none;
+      word-break: keep-all;
     }
 
-    /* 예측 결과 표시 구역 */
+    /* 결과 박스 */
     .top-result-box {
-      background-color: #f8f9fa;
-      border-radius: 8px;
-      padding: 12px;
+      background: var(--primary-light);
+      border-radius: 14px;
+      padding: 14px;
       text-align: center;
       margin-bottom: 16px;
-      border: 1px solid #dee2e6;
+      border: 1px solid #a7f3d0;
     }
 
     .top-result-label {
-      font-size: 0.85rem;
-      color: #6c757d;
+      font-size: 0.8rem;
+      color: #065f46;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .top-result-value {
-      font-size: 1.4rem;
+      font-size: 1.35rem;
       font-weight: 700;
-      color: #0f5132;
-      margin: 4px 0;
+      color: #047857;
+      margin: 2px 0;
     }
 
     .disclaimer {
-      font-size: 0.75rem;
-      color: #6c757d;
+      font-size: 0.72rem;
+      color: #047857;
+      opacity: 0.8;
     }
 
-    /* 확률 프로그레스 바 */
+    /* 프로그레스 바 레이아웃 */
     .label-container {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
 
     .label-row {
       display: flex;
       flex-direction: column;
       gap: 4px;
+      background-color: #f8fafc;
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
     }
 
     .label-info {
       display: flex;
       justify-content: space-between;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       font-weight: 600;
     }
 
     .progress-bar-bg {
       width: 100%;
-      height: 16px;
-      background-color: #e9ecef;
-      border-radius: 8px;
+      height: 10px;
+      background-color: #e2e8f0;
+      border-radius: 5px;
       overflow: hidden;
     }
 
     .progress-bar-fill {
       height: 100%;
       width: 0%;
-      background-color: #198754;
-      transition: width 0.1s ease-in-out;
+      background-color: var(--primary-color);
+      border-radius: 5px;
+      transition: width 0.15s ease-out;
     }
 
-    /* 푸터 팀 정보 */
-    .footer-info {
+    /* 푸터 */
+    footer.footer-info {
       text-align: center;
-      font-size: 0.85rem;
-      color: #6c757d;
-      border-top: 1px solid #dee2e6;
-      padding-top: 12px;
-      margin-top: 8px;
+      font-size: 0.82rem;
+      color: var(--text-sub);
+      padding: 12px 0;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: center;
+      gap: 12px;
     }
   </style>
 </head>
 <body>
 
   <div class="container">
+    <!-- 헤더 영역 -->
     <header class="card">
-      <h1>프로젝트 휴지</h1>
-      <p class="subtitle">화장실 휴지 부족 문제를 해결하기 위한 실시간 이미지 판별 모델</p>
+      <h1><i class="fa-solid fa-toilet-paper"></i> 프로젝트 휴지</h1>
+      <p class="subtitle">화장실 휴지 부족 문제를 해결하기 위한 실시간 AI 판별 모델</p>
     </header>
 
+    <!-- 모델 안내 카드 -->
     <section class="card">
-      <p><span class="bold">해결하려는 문제:</span> 화장실 휴지 부족</p>
-      <p><span class="bold">주요 사용자:</span> 한영외고 화장실 관리자</p>
-      <p><span class="bold">모델 역할:</span> 카메라로 촬영하여 휴지가 있는지 판단하고, 부족 시 관리자가 인지할 수 있도록 보조</p>
+      <div class="info-list">
+        <div class="info-item">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <div><span class="bold">해결하려는 문제:</span> 화장실 휴지 부족 현상 예방</div>
+        </div>
+        <div class="info-item">
+          <i class="fa-solid fa-user-check"></i>
+          <div><span class="bold">주요 사용자:</span> 한영외고 화장실 관리자</div>
+        </div>
+        <div class="info-item">
+          <i class="fa-solid fa-robot"></i>
+          <div><span class="bold">모델 역할:</span> 휴지 유무를 AI가 판단하여 관리자의 상태 모니터링 보조</div>
+        </div>
+      </div>
     </section>
 
+    <!-- 메인 체험 구역 -->
     <main class="card experience-card">
-      <h2 class="experience-title">모델 실시간 체험하기</h2>
+      <h2 class="experience-title"><i class="fa-solid fa-camera"></i> 모델 실시간 체험하기</h2>
 
       <div class="webcam-container" id="webcam-container">
-        <div class="placeholder-text" id="placeholder-text">
-          시작 버튼을 누르면 카메라가 켜집니다.
+        <div class="placeholder-content" id="placeholder-text">
+          <i class="fa-solid fa-video-slash"></i>
+          <span class="placeholder-text">아래 '시작' 버튼을 누르면 카메라가 실행됩니다.</span>
         </div>
       </div>
 
       <div class="btn-group">
-        <button id="start-btn" class="btn btn-start" onclick="init()">시작</button>
-        <button id="stop-btn" class="btn btn-stop" onclick="stop()" disabled>중지</button>
+        <button id="start-btn" class="btn btn-start" onclick="init()">
+          <i class="fa-solid fa-play"></i> 시작
+        </button>
+        <button id="stop-btn" class="btn btn-stop" onclick="stop()" disabled>
+          <i class="fa-solid fa-stop"></i> 중지
+        </button>
       </div>
 
       <div id="status-message" class="status-message"></div>
       <div id="error-message" class="error-message"></div>
 
       <div class="top-result-box">
-        <div class="top-result-label">현재 가장 유력한 상태</div>
+        <div class="top-result-label">현재 판단 결과</div>
         <div class="top-result-value" id="top-result-text">-</div>
-        <div class="disclaimer">* 가장 높은 확률이 반드시 100% 정답은 아닙니다.</div>
+        <div class="disclaimer">* AI 판단 결과가 100% 정확하지 않을 수 있습니다.</div>
       </div>
 
       <div id="label-container" class="label-container"></div>
     </main>
 
+    <!-- 한계점 및 주의사항 -->
     <section class="card">
-      <p><span class="bold">모델 한계:</span> 휴지통 아래로 늘어뜨려진 부분이 없으면 휴지 유무를 정확히 구분하지 못할 수 있습니다.</p>
-      <p><span class="bold">사람이 확인해야 할 부분:</span> 카메라 결과에만 의존하지 말고, 휴지가 진짜 없는지 휴지통 안을 자세히 직접 살펴보세요.</p>
+      <div class="info-list">
+        <div class="info-item">
+          <i class="fa-solid fa-triangle-exclamation" style="color: #eab308;"></i>
+          <div><span class="bold">모델 한계:</span> 휴지통 아래로 늘어뜨려진 부분이 없는 경우 오판할 수 있습니다.</div>
+        </div>
+        <div class="info-item">
+          <i class="fa-solid fa-eye" style="color: #2563eb;"></i>
+          <div><span class="bold">사람이 확인해야 할 부분:</span> 결과가 모호할 땐 직접 휴지통 내부를 교차 확인해 주세요.</div>
+        </div>
+      </div>
     </section>
 
+    <!-- 푸터 -->
     <footer class="footer-info">
-      <p><span class="bold">팀명:</span> 팀 휴지</p>
-      <p><span class="bold">팀원:</span> 정태연, 조수현, 최다흔</p>
+      <div><span class="bold">팀명:</span> 팀 휴지</div>
+      <div>|</div>
+      <div><span class="bold">팀원:</span> 정태연, 조수현, 최다흔</div>
     </footer>
   </div>
 
@@ -310,43 +444,39 @@
 
     // 초기화 및 실행 시작 함수
     async function init() {
-      if (isRunning) return; // 중복 실행 방지
+      if (isRunning) return;
 
       resetError();
       startBtn.disabled = true;
-      statusMsg.innerText = "모델을 불러오는 중입니다...";
+      statusMsg.innerText = "AI 모델을 로딩하고 있습니다...";
 
       const modelURL = URL + "model.json";
       const metadataURL = URL + "metadata.json";
 
       try {
-        // 1. 모델 및 메타데이터 불러오기
         model = await tmImage.load(modelURL, metadataURL);
         maxPredictions = model.getTotalClasses();
 
-        statusMsg.innerText = "카메라 권한을 요청 중입니다...";
+        statusMsg.innerText = "카메라 권한을 확인 중입니다...";
 
-        // 2. 웹캠 설정 및 권한 요청
         const flip = true;
-        webcam = new tmImage.Webcam(320, 320, flip);
-        await webcam.setup(); // 카메라 권한 요청
+        webcam = new tmImage.Webcam(300, 300, flip);
+        await webcam.setup(); 
         await webcam.play();
 
-        // 3. UI 업데이트 및 화면 구성
         isRunning = true;
         stopBtn.disabled = false;
-        statusMsg.innerText = "실시간 판별 중...";
+        statusMsg.innerText = "🟢 실시간 감지 중";
         placeholderText.style.display = "none";
+        webcamContainer.style.border = "none";
 
-        // 기존 캔버스가 남아있지 않도록 정돈 후 웹캠 캔버스 추가
         const canvas = webcam.canvas;
         if (!webcamContainer.contains(canvas)) {
           webcamContainer.appendChild(canvas);
         }
 
-        // 4. 메타데이터에서 클래스 이름을 가져와 UI 동적 생성
         labelContainer = document.getElementById("label-container");
-        labelContainer.innerHTML = ""; // 기존 레이아웃 초기화
+        labelContainer.innerHTML = "";
 
         for (let i = 0; i < maxPredictions; i++) {
           const className = model.getClassLabels()[i];
@@ -381,17 +511,14 @@
           labelContainer.appendChild(row);
         }
 
-        // 5. 실시간 예측 프레임 반복 실행
         loop();
 
       } catch (err) {
-        // 오류 처리 및 안내
         showError("모델을 불러오지 못했거나 카메라 사용이 거부되었습니다. 카메라 권한과 인터넷 연결을 확인해 주세요.");
         stop();
       }
     }
 
-    // 루프 실행 함수 (카메라 업데이트 & 예측)
     async function loop() {
       if (!isRunning) return;
 
@@ -400,7 +527,6 @@
       animationFrameId = window.requestAnimationFrame(loop);
     }
 
-    // 예측 처리 함수
     async function predict() {
       if (!model || !webcam) return;
 
@@ -412,7 +538,6 @@
         const prob = prediction[i].probability;
         const percentage = (prob * 100).toFixed(0);
 
-        // 막대그래프 및 퍼센트 텍스트 업데이트
         const bar = document.getElementById(`bar-${i}`);
         const percentText = document.getElementById(`percent-${i}`);
 
@@ -421,28 +546,23 @@
           percentText.innerText = percentage + "%";
         }
 
-        // 가장 높은 확률값 탐색
         if (prob > highestProb) {
           highestProb = prob;
           highestClassName = prediction[i].className;
         }
       }
 
-      // 가장 높은 확률의 클래스 이름 표시
       topResultText.innerText = `${highestClassName} (${(highestProb * 100).toFixed(0)}%)`;
     }
 
-    // 중지 및 리소스 정리 함수
     function stop() {
       isRunning = false;
 
-      // 애니메이션 프레임 취소
       if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
         animationFrameId = null;
       }
 
-      // 웹캠 정지
       if (webcam) {
         webcam.stop();
         if (webcam.canvas && webcamContainer.contains(webcam.canvas)) {
@@ -451,8 +571,8 @@
         webcam = null;
       }
 
-      // UI 상태 복구
-      placeholderText.style.display = "block";
+      placeholderText.style.display = "flex";
+      webcamContainer.style.border = "2px dashed #cbd5e1";
       startBtn.disabled = false;
       stopBtn.disabled = true;
       statusMsg.innerText = "중지되었습니다.";
@@ -462,14 +582,12 @@
       labelContainer.innerHTML = "";
     }
 
-    // 에러 표시 함수
     function showError(msg) {
       errorMsg.innerText = msg;
       errorMsg.style.display = "block";
       statusMsg.innerText = "";
     }
 
-    // 에러 초기화 함수
     function resetError() {
       errorMsg.innerText = "";
       errorMsg.style.display = "none";

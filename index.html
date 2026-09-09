@@ -37,18 +37,18 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 20px;
+      padding: 30px 20px;
     }
 
     .dossier-container {
       width: 100%;
-      max-width: 560px;
+      max-width: 600px;
       background-color: var(--parchment);
       background-image: url('https://www.transparenttextures.com/patterns/aged-paper.png');
       border: 12px solid #281d17;
       border-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png') 30 round;
       box-shadow: 0 20px 50px var(--shadow), 0 0 15px rgba(184, 151, 66, 0.2);
-      padding: 28px 22px;
+      padding: 36px 30px;
       position: relative;
       border-radius: 4px;
     }
@@ -64,28 +64,29 @@
     .dossier-header {
       text-align: center;
       border-bottom: 2px double var(--ink);
-      padding-bottom: 12px;
-      margin-bottom: 16px;
+      padding-bottom: 16px;
+      margin-bottom: 24px;
     }
 
     .dossier-header h2 {
       font-family: 'Cinzel', serif;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       letter-spacing: 3px;
       color: var(--wax-red);
     }
 
     .dossier-header h1 {
       font-family: 'Playfair Display', serif;
-      font-size: 1.7rem;
+      font-size: 1.8rem;
       font-weight: 900;
       color: var(--ink);
+      margin-top: 4px;
     }
 
     .page {
       display: none;
       flex-direction: column;
-      gap: 12px;
+      gap: 18px;
       animation: fadeIn 0.4s ease-in-out forwards;
     }
 
@@ -98,57 +99,57 @@
 
     .page-title {
       font-family: 'Cinzel', serif;
-      font-size: 1rem;
+      font-size: 1.05rem;
       border-bottom: 1px solid var(--ink);
-      padding-bottom: 4px;
+      padding-bottom: 6px;
       display: flex;
       justify-content: space-between;
+      font-weight: bold;
     }
 
     .form-group {
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 8px;
     }
 
-    label { font-size: 0.85rem; font-weight: 700; color: #2c2018; }
+    label { font-size: 0.9rem; font-weight: 700; color: #2c2018; }
 
     input[type="text"], select, textarea {
       width: 100%;
       background: rgba(255, 255, 255, 0.4);
       border: none;
       border-bottom: 2px solid var(--ink);
-      padding: 6px 8px;
+      padding: 8px 10px;
       font-family: 'Noto Serif KR', serif;
-      font-size: 0.9rem;
+      font-size: 0.92rem;
       color: var(--ink);
       outline: none;
     }
 
-    textarea { resize: none; border: 1px solid var(--ink); height: 50px; }
+    textarea { resize: vertical; border: 1px solid var(--ink); height: 75px; line-height: 1.4; }
 
-    /* 장소 체크박스/라디오 스타일 */
     .checkbox-group {
       display: flex;
-      gap: 8px;
+      gap: 12px;
       flex-wrap: wrap;
-      background: rgba(0, 0, 0, 0.05);
-      padding: 8px;
+      background: rgba(0, 0, 0, 0.04);
+      padding: 10px 12px;
       border: 1px dashed var(--ink);
     }
 
     .checkbox-group label {
       font-weight: normal;
-      font-size: 0.82rem;
+      font-size: 0.88rem;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 3px;
+      gap: 4px;
     }
 
     .signature-pad {
       width: 100%;
-      height: 80px;
+      height: 90px;
       background: rgba(255, 255, 255, 0.5);
       border: 1px dashed var(--ink);
       cursor: crosshair;
@@ -159,12 +160,13 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
+      gap: 8px;
+      margin-top: 8px;
     }
 
     .wax-seal-btn {
-      width: 65px;
-      height: 65px;
+      width: 70px;
+      height: 70px;
       border-radius: 50%;
       background: radial-gradient(circle at 30% 30%, #a81313, var(--wax-red), #4a0000);
       box-shadow: 0 4px 8px var(--shadow);
@@ -186,21 +188,21 @@
       background: #281d17;
       color: var(--parchment);
       border: 1px solid var(--gold-accent);
-      padding: 10px 16px;
+      padding: 12px 18px;
       font-family: 'Cinzel', 'Noto Serif KR', serif;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       font-weight: 700;
       cursor: pointer;
-      margin-top: 6px;
+      margin-top: 10px;
       transition: all 0.2s;
     }
 
     .btn-nav:hover { background: var(--wax-red); color: #fff; }
 
     .webcam-box {
-      width: 180px;
-      height: 180px;
-      margin: 0 auto;
+      width: 200px;
+      height: 200px;
+      margin: 10px auto;
       border: 4px solid var(--ink);
       background: #000;
       display: flex;
@@ -211,49 +213,76 @@
 
     .webcam-box canvas { width: 100% !important; height: 100% !important; object-fit: cover; }
 
-    /* 보고서 전용 양식 */
+    /* 보고서 양식 및 가독성 개선 */
     .report-paper {
       background: #d8c3a5;
       border: 2px solid var(--ink);
-      padding: 14px;
+      padding: 22px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 14px;
     }
 
     .report-title {
       font-family: 'Cinzel', serif;
       text-align: center;
-      font-size: 1.1rem;
+      font-size: 1.25rem;
       font-weight: 900;
       border-bottom: 2px solid var(--ink);
-      padding-bottom: 4px;
+      padding-bottom: 8px;
+      letter-spacing: 1px;
+    }
+
+    .report-section {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      border-bottom: 1px dashed #a3927c;
+      padding-bottom: 8px;
     }
 
     .report-row {
-      font-size: 0.8rem;
+      font-size: 0.88rem;
       display: flex;
       justify-content: space-between;
-      border-bottom: 1px dashed #a3927c;
-      padding-bottom: 2px;
+      line-height: 1.4;
+    }
+
+    .report-row span.label {
+      font-weight: bold;
+      color: #2c2018;
+      min-width: 90px;
+    }
+
+    .report-row span.val {
+      text-align: right;
+      color: var(--ink);
     }
 
     .sherlock-deduction-box {
       border: 2px double var(--wax-red);
-      background: rgba(139, 0, 0, 0.05);
-      padding: 8px;
-      font-size: 0.78rem;
-      line-height: 1.35;
+      background: rgba(139, 0, 0, 0.04);
+      padding: 14px;
+      font-size: 0.86rem;
+      line-height: 1.6;
     }
 
     .sherlock-deduction-box h4 {
       font-family: 'Cinzel', serif;
       color: var(--wax-red);
-      margin-bottom: 4px;
+      margin-bottom: 8px;
       text-align: center;
+      font-size: 0.95rem;
+      letter-spacing: 1px;
     }
 
-    .error-text { color: var(--wax-red); font-size: 0.75rem; display: none; }
+    .sherlock-deduction-box p {
+      text-align: justify;
+      text-indent: 10px;
+      color: #1a1412;
+    }
+
+    .error-text { color: var(--wax-red); font-size: 0.8rem; display: none; }
 
     /* 비밀유지서약 모달 */
     .modal-overlay {
@@ -270,14 +299,14 @@
     .modal-content {
       background: var(--parchment);
       border: 8px solid #281d17;
-      padding: 20px;
-      max-width: 480px;
+      padding: 24px;
+      max-width: 500px;
       width: 100%;
       max-height: 90vh;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 14px;
       box-shadow: 0 0 30px #000;
     }
   </style>
@@ -302,11 +331,11 @@
       </div>
       <div class="form-group">
         <label>의뢰인 학번 (필수)</label>
-        <input type="text" id="student-id" placeholder="학번을 입력하시오">
+        <input type="text" id="student-id" placeholder="학번을 입력하십시오">
       </div>
       <div class="form-group">
         <label>의뢰인 성명 (필수)</label>
-        <input type="text" id="student-name" placeholder="성명을 입력하시오">
+        <input type="text" id="student-name" placeholder="성명을 입력하십시오">
       </div>
       <p class="error-text" id="err-1">모든 신원 정보를 빠짐없이 작성해야 합니다.</p>
       <button class="btn-nav" onclick="nextPage(1)">다음: 장소 및 단서 선택 ▸</button>
@@ -382,7 +411,7 @@
           <option value="쉬는시간 대량 사용 학생">쉬는시간 대량 사용 학생</option>
           <option value="청소 점검 미이행 관계자">청소 점검 미이행 관계자</option>
           <option value="시험기간 고카페인 중독자">시험기간 고카페인 중독자</option>
-          <option value="익명의 휴지 연금술사">익명의 휴지 연금술사</option>
+          <option value="익명의 휴지 절도범">익명의 휴지 절도범</option>
         </select>
       </div>
       <div class="form-group">
@@ -409,7 +438,7 @@
         <div class="wax-seal-btn" id="wax-btn" onclick="stampWax()">
           <i class="fa-solid fa-stamp"></i>
         </div>
-        <span id="wax-status" style="font-size:0.75rem;">인장이 찍히지 않았습니다</span>
+        <span id="wax-status" style="font-size:0.8rem;">인장이 찍히지 않았습니다</span>
       </div>
       <p class="error-text" id="err-4">서명과 실링왁스 인장이 모두 필요합니다.</p>
       <button class="btn-nav" onclick="startInvestigation()">스캔 및 셜록 추론 개시 ▸</button>
@@ -422,9 +451,9 @@
         <span>SCANNING</span>
       </div>
       <div class="webcam-box" id="webcam-box">
-        <span style="color:#aaa; font-size:0.8rem;">렌즈 초기화 중...</span>
+        <span style="color:#aaa; font-size:0.85rem;">렌즈 초기화 중...</span>
       </div>
-      <div style="text-align:center; font-size:0.85rem; color:var(--wax-red);" id="scan-status">
+      <div style="text-align:center; font-size:0.9rem; color:var(--wax-red); font-weight:bold;" id="scan-status">
         카메라 분석 중...
       </div>
       <button class="btn-nav" onclick="generateReport()">최종 탐정 보고서 발급 ▸</button>
@@ -433,57 +462,59 @@
     <!-- PAGE 6: 최종 탐정 보고서 -->
     <div class="page" id="page-6">
       <div class="report-paper">
-        <div class="report-title">SHERLOCK'S CASE REPORT</div>
+        <div class="report-title">OFFICIAL INVESTIGATION REPORT</div>
         
-        <div class="report-row"><span>의뢰인:</span><strong id="rep-client">-</strong></div>
-        <div class="report-row"><span>수사 장소:</span><span id="rep-location">-</span></div>
-        <div class="report-row"><span>목격 단서:</span><span id="rep-clue">-</span></div>
-
-        <!-- 셜록의 어이없는 AI 추리 결과 -->
-        <div class="sherlock-deduction-box">
-          <h4>SHERLOCK'S DEDUCTION</h4>
-          <p><b>🔍 최종 지목 범인:</b> <span id="rep-culprit" style="color:var(--wax-red); font-weight:bold;">-</span></p>
-          <p><b>💡 황당한 범행 동기:</b> <span id="rep-motive">-</span></p>
-          <p><b>🛠️ 어이없는 범행 수단:</b> <span id="rep-method">-</span></p>
-          <p><b>🗣️ 셜록의 명언:</b> <i id="rep-quote">-</i></p>
+        <div class="report-section">
+          <div class="report-row"><span class="label">의뢰인:</span><span class="val" id="rep-client">-</span></div>
+          <div class="report-row"><span class="label">수사 장소:</span><span class="val" id="rep-location">-</span></div>
+          <div class="report-row"><span class="label">현장 단서:</span><span class="val" id="rep-clue">-</span></div>
         </div>
 
-        <div class="report-row"><span>AI 스캔 상태:</span><strong id="rep-verdict" style="color:var(--wax-red);">-</strong></div>
+        <!-- 정교한 셜록 홈즈 스타일 추리문 -->
+        <div class="sherlock-deduction-box">
+          <h4>SHERLOCK HOLMES DEDUCTION</h4>
+          <p id="rep-deduction-text">추리 분석 중...</p>
+        </div>
 
-        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:4px;">
+        <div class="report-row" style="padding-top: 4px;"><span class="label">렌즈 스캔 판정:</span><strong class="val" id="rep-verdict" style="color:var(--wax-red);">-</strong></div>
+
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:10px;">
           <div>
-            <div style="font-size:0.65rem;">SIGNATURE</div>
-            <img id="rep-sig-img" style="max-width:100px; max-height:40px; border-bottom:1px solid #000;" alt="서명">
+            <div style="font-size:0.7rem; color:#555; margin-bottom:2px;">CLIENT SIGNATURE</div>
+            <img id="rep-sig-img" style="max-width:110px; max-height:45px; border-bottom:1px solid #000;" alt="서명">
           </div>
-          <div style="width:35px; height:35px; border-radius:50%; background:var(--wax-red); color:var(--gold-accent); display:flex; align-items:center; justify-content:center; border:2px solid var(--gold-accent);">
-            <i class="fa-solid fa-crown" style="font-size:0.8rem;"></i>
+          <div style="text-align:center;">
+            <div style="font-size:0.7rem; color:#555; margin-bottom:2px;">221B SEAL</div>
+            <div style="width:40px; height:40px; border-radius:50%; background:var(--wax-red); color:var(--gold-accent); display:flex; align-items:center; justify-content:center; border:2px solid var(--gold-accent);">
+              <i class="fa-solid fa-crown" style="font-size:0.9rem;"></i>
+            </div>
           </div>
         </div>
       </div>
 
-      <button class="btn-nav" style="background:#8b0000; color:#fff;" onclick="openNdaModal()">🔒 타인 비밀 보고서 누적 조회하기</button>
+      <button class="btn-nav" style="background:#8b0000; color:#fff;" onclick="openNdaModal()">🔒 타인 비밀 보고서 보관함 열람</button>
       <button class="btn-nav" style="background:#281d17;" onclick="location.reload()">새 사건 의뢰하기</button>
     </div>
   </div>
 
-  <!-- 비밀유지서약(NDA) 모달 -->
+  <!-- 비밀유지서약 모달 -->
   <div class="modal-overlay" id="nda-modal">
     <div class="modal-content">
-      <h2 style="font-family:'Cinzel'; text-align:center; border-bottom:2px solid var(--ink); padding-bottom:6px;">221B NON-DISCLOSURE AGREEMENT</h2>
-      <p style="font-size:0.8rem; line-height:1.4;">
-        본 서약서는 Baker Street 221B 탐정 사무소의 열람 기밀 문서입니다. 타 의뢰인의 수사 보고서에 포함된 어이없는 범행 동기 및 비밀 단서를 제3자에게 유출하지 않을 것을 엄격히 서약합니다.
+      <h2 style="font-family:'Cinzel'; text-align:center; border-bottom:2px solid var(--ink); padding-bottom:8px;">221B NON-DISCLOSURE AGREEMENT</h2>
+      <p style="font-size:0.85rem; line-height:1.5;">
+        본 서약서는 221B Baker Street 탐정 사무소의 보안 문서입니다. 타 의뢰인의 수사 기록 및 본 사무소의 정교한 추리 기법에 관한 정보는 제3자에게 누설할 수 없습니다.
       </p>
       
-      <div class="form-group">
-        <label><input type="checkbox" id="nda-check"> 위 기밀 유지 조항에 동의합니다.</label>
+      <div class="form-group" style="margin-top:4px;">
+        <label><input type="checkbox" id="nda-check"> 위의 기밀 유지 조항을 숙지하였으며 이에 동의합니다.</label>
       </div>
 
       <div class="form-group">
-        <label>열람자 서명 (마우스/터치)</label>
-        <canvas id="nda-canvas" class="signature-pad" style="height:60px;"></canvas>
+        <label>열람자 친필 서명</label>
+        <canvas id="nda-canvas" class="signature-pad" style="height:70px;"></canvas>
       </div>
 
-      <p class="error-text" id="nda-err">동의 체크와 서명이 필요합니다.</p>
+      <p class="error-text" id="nda-err">동의 체크와 서명이 완료되어야 서약이 승인됩니다.</p>
       <button class="btn-nav" onclick="verifyNdaAndShowArchive()">서약 승인 및 보고서 보관함 열람 ▸</button>
       <button class="btn-nav" style="background:#555;" onclick="closeNdaModal()">닫기</button>
     </div>
@@ -491,10 +522,10 @@
 
   <!-- 타인 보고서 보관함 모달 -->
   <div class="modal-overlay" id="archive-modal">
-    <div class="modal-content" style="max-width:520px;">
-      <h2 style="font-family:'Cinzel'; text-align:center; border-bottom:2px solid var(--ink); padding-bottom:6px;">CONFIDENTIAL ARCHIVES</h2>
-      <div id="archive-list" style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
-        <!-- 누적된 보고서들이 dynamic하게 들어옴 -->
+    <div class="modal-content" style="max-width:540px;">
+      <h2 style="font-family:'Cinzel'; text-align:center; border-bottom:2px solid var(--ink); padding-bottom:8px;">CONFIDENTIAL ARCHIVES</h2>
+      <div id="archive-list" style="display:flex; flex-direction:column; gap:12px; margin-top:10px;">
+        <!-- 누적된 보고서 목록 -->
       </div>
       <button class="btn-nav" onclick="closeArchiveModal()">보관함 닫기</button>
     </div>
@@ -505,28 +536,6 @@
     let isWaxStamped = false;
     let model, webcam, maxPredictions;
     let finalScanResult = "판정 중...";
-
-    // 셜록의 어이없는 랜덤 AI 추리 데이터베이스
-    const motives = [
-      "영국 기숙학교 전통 요리 교재로 쓰기 위해",
-      "마법 지팡이 대신 휴지심으로 주문을 외우려다 실패해서",
-      "학교 매점 빵을 휴지에 싸서 훈제 만들기 위해",
-      "세계 종이접기 대회에 '거대 휴지 펠리칸'으로 출전하려고",
-      "달빛을 반사시켜 셜록 홈즈의 눈을 부시게 하려는 고도의 공작"
-    ];
-
-    const methods = [
-      "투명망토를 쓰고 3초 만에 휴지만 쏙 감아서 도주",
-      "훈련된 훈련용 비둘기를 창문으로 침투시켜 운반",
-      "미니 소형 핫팩으로 휴지 접착제를 녹여 통째로 인출",
-      "휴지에 고속 회전 팽이를 비벼 마찰력으로 몽땅 감아버림"
-    ];
-
-    const quotes = [
-      "불가능을 제외하고 남은 것이 아무리 어이없을지라도, 그것이 진실이라네.",
-      "범인은 너무나 완벽해서 휴지 한 칸조차 남기지 않는 치밀함을 보였지.",
-      "이것은 단순한 휴지 소진이 아니라, 학교 전체를 흔들 거대한 음모의 시작이야."
-    ];
 
     // Canvas 관리 (서명)
     const sigCanvas = document.getElementById("sig-canvas");
@@ -606,13 +615,13 @@
       try {
         model = await tmImage.load(MODEL_URL + "model.json", MODEL_URL + "metadata.json");
         maxPredictions = model.getTotalClasses();
-        webcam = new tmImage.Webcam(180, 180, true);
+        webcam = new tmImage.Webcam(200, 200, true);
         await webcam.setup(); await webcam.play();
         const box = document.getElementById("webcam-box");
         box.innerHTML = ""; box.appendChild(webcam.canvas);
         window.requestAnimationFrame(loop);
       } catch (e) {
-        alert("카메라 및 모델 로드 중 실패가 발생했습니다.");
+        alert("카메라 및 모델 로드 중 오류가 발생했습니다.");
       }
     }
 
@@ -643,29 +652,28 @@
 
       const clueSel = document.getElementById("clue-select").value;
       const clueStr = (clueSel === "custom") ? document.getElementById("custom-clue").value : clueSel;
+      const detailsStr = document.getElementById("case-details").value;
       const suspectStr = document.getElementById("suspect").value;
+      const reasonStr = document.getElementById("suspect-reason").value;
 
-      // 랜덤 AI 생성 셜록 추리
-      const randomMotive = motives[Math.floor(Math.random() * motives.length)];
-      const randomMethod = methods[Math.floor(Math.random() * methods.length)];
-      const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+      // 진지한 셜록 홈즈 스타일의 통합 논리 추리문 생성
+      const SherlockAnalysis = `
+        의뢰인이 제출한 정황("${detailsStr}")과 현장에서 발견된 단서인 '${clueStr}'을 종합적으로 검토해 볼 때, 본 사건은 단순한 물품 소진이 아닌 명확한 의도와 패턴을 가진 행동입니다. 수사 대상 지역인 ${locationStr}의 동선과 시간대별 사용량을 정밀 분석한 결과, 유력한 용의자로 지목된 [${suspectStr}]의 행적과 완벽하게 일치합니다. 의뢰인이 제기한 선정 사유("${reasonStr}")는 관찰에 기반한 매우 타당한 근거를 제공하며, 관찰된 정황 증거와 물리학적 정황상 해당 인물이 본 사건의 주요 원인임을 가리키고 있습니다. 불가능을 모두 제외하고 남은 유일한 가능성은 그것이 아무리 뜻밖일지라도 진실입니다.
+      `;
 
       document.getElementById("rep-client").innerText = `${document.getElementById("student-id").value} ${document.getElementById("student-name").value}`;
       document.getElementById("rep-location").innerText = locationStr;
       document.getElementById("rep-clue").innerText = clueStr;
-      document.getElementById("rep-culprit").innerText = suspectStr;
-      document.getElementById("rep-motive").innerText = randomMotive;
-      document.getElementById("rep-method").innerText = randomMethod;
-      document.getElementById("rep-quote").innerText = `"${randomQuote}"`;
+      document.getElementById("rep-deduction-text").innerText = SherlockAnalysis.trim();
       document.getElementById("rep-verdict").innerText = finalScanResult;
       document.getElementById("rep-sig-img").src = sigCanvas.toDataURL();
 
-      // 저장소 누적
+      // localStore 누적 저장
       const newReport = {
         client: `${document.getElementById("student-id").value} ${document.getElementById("student-name").value}`,
         location: locationStr,
         culprit: suspectStr,
-        motive: randomMotive,
+        analysis: SherlockAnalysis.trim(),
         verdict: finalScanResult
       };
       let archives = JSON.parse(localStorage.getItem("sherlock_reports") || "[]");
@@ -673,7 +681,7 @@
       localStorage.setItem("sherlock_reports", JSON.stringify(archives));
     }
 
-    // 모달 제어
+    // 모달 관리
     function openNdaModal() { document.getElementById("nda-modal").style.display = "flex"; setTimeout(initCanvases, 100); }
     function closeNdaModal() { document.getElementById("nda-modal").style.display = "none"; }
     function closeArchiveModal() { document.getElementById("archive-modal").style.display = "none"; }
@@ -693,15 +701,15 @@
       let archives = JSON.parse(localStorage.getItem("sherlock_reports") || "[]");
 
       if (archives.length === 0) {
-        list.innerHTML = `<p style="text-align:center; font-size:0.85rem;">보관된 타인 보고서가 없습니다.</p>`;
+        list.innerHTML = `<p style="text-align:center; font-size:0.88rem; color:#555;">보관된 기밀 보고서가 존재하지 않습니다.</p>`;
       } else {
         archives.forEach((item, idx) => {
           list.innerHTML += `
-            <div style="background:rgba(255,255,255,0.4); border:1px solid #000; padding:8px; font-size:0.78rem;">
-              <div style="font-weight:bold; color:var(--wax-red);">DOSSIER #${idx + 1} - ${item.client}</div>
-              <div><b>장소:</b> ${item.location} | <b>지목 범인:</b> ${item.culprit}</div>
-              <div><b>동기:</b> ${item.motive}</div>
-              <div><b>AI 판정:</b> ${item.verdict}</div>
+            <div style="background:rgba(255,255,255,0.45); border:1px solid #000; padding:12px; font-size:0.82rem; line-height:1.4;">
+              <div style="font-weight:bold; color:var(--wax-red); font-family:'Cinzel';">CASE DOSSIER #${idx + 1} - ${item.client}</div>
+              <div style="margin-top:4px;"><b>수사 장소:</b> ${item.location} | <b>지목 용의자:</b> ${item.culprit}</div>
+              <div style="margin-top:4px; color:#2c2018;"><b>셜록 추리 요약:</b> ${item.analysis.substring(0, 85)}...</div>
+              <div style="margin-top:4px;"><b>AI 판정:</b> ${item.verdict}</div>
             </div>`;
         });
       }

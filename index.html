@@ -3,31 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>프로젝트 휴지 - 실시간 판별 체험</title>
+  <title>221B CASE FILE: PROJECT TISSUE</title>
 
   <!-- TensorFlow.js & Teachable Machine -->
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8.3/dist/teachablemachine-image.min.js"></script>
 
-  <!-- Google Fonts: Cinzel (영국 고풍 서체) & Noto Serif KR -->
+  <!-- Google Fonts: Special Elite(타자기) & Playfair Display & Noto Serif KR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Noto+Serif+KR:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Special+Elite&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
     :root {
-      --vintage-bg: #1a1614;
-      --paper-bg: #f4eae1;
-      --card-bg: #221c19;
-      --border-gold: #c5a059;
-      --border-gold-dark: #8c6d37;
-      --text-gold: #dfb76c;
-      --text-paper: #2b231d;
-      --text-muted: #a39585;
-      --accent-red: #801818;
-      --accent-green: #1c4a2a;
-      --shadow-vintage: 0 10px 25px rgba(0, 0, 0, 0.7), inset 0 0 15px rgba(0,0,0,0.5);
+      --bg-dark: #0b0d0e;
+      --board-bg: #1a1715;
+      --paper-aged: #d8c3a5;
+      --paper-photo: #e8ded1;
+      --ink-black: #1a1a1a;
+      --detective-red: #8b0000;
+      --red-string: #b22222;
+      --brass-gold: #c5a059;
+      --shadow-deep: 0 15px 35px rgba(0, 0, 0, 0.9);
     }
 
     * {
@@ -39,132 +37,157 @@
     body {
       font-family: 'Noto Serif KR', serif;
       line-height: 1.6;
-      color: var(--text-paper);
-      background-color: var(--vintage-bg);
+      color: var(--paper-aged);
+      background-color: var(--bg-dark);
+      /* 어둡고 비 내리는 밤거리 / 코르크 보드 비주얼 */
       background-image: 
-        radial-gradient(circle at 50% 30%, rgba(34, 28, 25, 0.8), rgba(15, 12, 10, 0.95)),
-        url('https://www.transparenttextures.com/patterns/dark-wood.png');
+        radial-gradient(circle at 50% 30%, rgba(20, 25, 28, 0.8), rgba(5, 5, 5, 0.98)),
+        url('https://www.transparenttextures.com/patterns/cork-board.png');
       min-height: 100vh;
-      padding: 30px 16px;
+      padding: 28px 16px;
     }
 
     .container {
-      max-width: 520px;
+      max-width: 500px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 22px;
-    }
-
-    /* 클래식 양장본 카드 공통 */
-    .card {
-      background-color: var(--paper-bg);
-      background-image: url('https://www.transparenttextures.com/patterns/aged-paper.png');
-      border: 2px solid var(--border-gold);
-      border-radius: 4px;
-      padding: 24px;
-      box-shadow: var(--shadow-vintage);
+      gap: 24px;
       position: relative;
     }
 
-    .card::before {
+    /* 수사 보드 연결 붉은 실 느낌의 레트로 라인 */
+    .container::before {
       content: '';
       position: absolute;
-      top: 4px; left: 4px; right: 4px; bottom: 4px;
-      border: 1px solid var(--border-gold-dark);
+      top: 40px;
+      left: 20px;
+      width: 3px;
+      height: 90%;
+      background: var(--red-string);
+      opacity: 0.35;
+      z-index: 0;
       pointer-events: none;
+      box-shadow: 0 0 8px var(--red-string);
     }
 
-    /* 헤더 디자인 */
+    /* 사건 파일 폴더 카드 */
+    .card {
+      background-color: #161311;
+      border: 1px solid #332b25;
+      border-radius: 2px;
+      padding: 24px;
+      box-shadow: var(--shadow-deep);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* 붉은 실 압정 장식 (레퍼런스 수사 보드 핀 구현) */
+    .pin {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 16px;
+      height: 16px;
+      background: radial-gradient(circle at 30% 30%, #ff4d4d, var(--detective-red));
+      border-radius: 50%;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.8);
+      z-index: 10;
+    }
+
+    /* 헤더: 베이커가 221B 사건 개요 */
     header.card {
+      background: linear-gradient(135deg, #221a16 0%, #0d0b0a 100%);
+      border: 2px solid var(--brass-gold);
       text-align: center;
-      background: #2a0808;
-      background-image: linear-gradient(135deg, #3d0c0c 0%, #1a0404 100%);
-      color: var(--text-gold);
-      border-color: var(--border-gold);
-      padding: 32px 20px;
+      padding: 30px 20px 22px 20px;
+    }
+
+    .street-tag {
+      font-family: 'Special Elite', cursive;
+      font-size: 0.85rem;
+      color: var(--brass-gold);
+      letter-spacing: 3px;
+      margin-bottom: 4px;
+      display: block;
     }
 
     header h1 {
-      font-family: 'Cinzel', serif;
-      font-size: 1.8rem;
-      font-weight: 700;
-      letter-spacing: 2px;
-      margin-bottom: 8px;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.85rem;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: 1px;
       text-transform: uppercase;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      text-shadow: 0 0 10px rgba(197, 160, 89, 0.3);
     }
 
-    header h1 i {
-      color: var(--border-gold);
-      margin: 0 8px;
+    header h1 span {
+      color: var(--detective-red);
     }
 
-    header .subtitle {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      font-style: italic;
+    .subtitle {
+      font-family: 'Special Elite', cursive;
+      font-size: 0.88rem;
+      color: #a39585;
+      margin-top: 6px;
       word-break: keep-all;
     }
 
-    /* 정보 목록 */
+    /* 사건 관련 단서 목록 */
     .info-list {
       display: flex;
       flex-direction: column;
       gap: 12px;
-      font-size: 0.92rem;
+      font-size: 0.9rem;
     }
 
     .info-item {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       align-items: flex-start;
-      color: var(--text-paper);
+      color: #c7b8a5;
     }
 
     .info-item i {
-      color: var(--accent-red);
-      margin-top: 4px;
+      color: var(--brass-gold);
       font-size: 1rem;
+      margin-top: 3px;
     }
 
     .bold {
       font-weight: 700;
-      color: #1a0404;
+      color: #fff;
     }
 
-    /* 체험 구역 카드 */
+    /* 메인 수사/분석 구역 */
     .experience-card {
-      background-color: var(--card-bg);
-      background-image: url('https://www.transparenttextures.com/patterns/black-paper.png');
-      color: var(--text-gold);
-      border: 3px double var(--border-gold);
-    }
-
-    .experience-card::before {
-      border-color: rgba(197, 160, 89, 0.3);
+      background-color: #120f0d;
+      border: 1px solid var(--brass-gold);
     }
 
     .experience-title {
-      font-family: 'Cinzel', serif;
-      font-size: 1.25rem;
-      color: var(--text-gold);
+      font-family: 'Special Elite', cursive;
+      font-size: 1.15rem;
+      color: var(--brass-gold);
       margin-bottom: 20px;
       text-align: center;
-      letter-spacing: 1px;
-      border-bottom: 1px solid var(--border-gold-dark);
-      padding-bottom: 10px;
+      letter-spacing: 2px;
+      border-bottom: 1px dashed #3a3028;
+      padding-bottom: 8px;
     }
 
-    /* 웹캠 컨테이너 - 탐정 렌즈 효과 */
+    /* 웹캠 - 빈티지 돋보기 및 사진 렌즈 프레임 */
     .webcam-container {
       width: 260px;
       height: 260px;
       margin: 0 auto 20px auto;
-      background-color: #0f0c0a;
-      border-radius: 50%;
-      border: 6px solid var(--border-gold);
-      box-shadow: 0 0 20px rgba(0,0,0,0.9), inset 0 0 15px rgba(0,0,0,0.8);
+      background-color: #050505;
+      border: 6px solid #2b231d;
+      outline: 2px solid var(--brass-gold);
+      border-radius: 4px;
+      box-shadow: inset 0 0 20px #000, 0 10px 20px rgba(0,0,0,0.8);
       overflow: hidden;
       display: flex;
       align-items: center;
@@ -176,42 +199,45 @@
       width: 100% !important;
       height: 100% !important;
       object-fit: cover;
+      filter: contrast(1.08) sepia(0.15); /* 살짝 빈티지 톤 필터 */
     }
 
     .placeholder-content {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
-      color: var(--text-muted);
+      gap: 12px;
+      color: #736456;
       text-align: center;
       padding: 20px;
     }
 
     .placeholder-content i {
-      font-size: 2.2rem;
-      color: var(--border-gold-dark);
+      font-size: 2.5rem;
+      color: var(--brass-gold);
+      opacity: 0.7;
     }
 
     .placeholder-text {
+      font-family: 'Special Elite', cursive;
       font-size: 0.85rem;
       word-break: keep-all;
     }
 
-    /* 컨트롤 버튼 (빈티지 왁스/버튼 스타일) */
+    /* 버튼 그룹 (타자기 키 & 레트로 감성) */
     .btn-group {
       display: flex;
       gap: 12px;
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
 
     .btn {
       flex: 1;
       padding: 12px 16px;
-      font-family: 'Cinzel', 'Noto Serif KR', serif;
+      font-family: 'Special Elite', 'Noto Serif KR', serif;
       font-size: 0.95rem;
       font-weight: 700;
-      border: 1px solid var(--border-gold);
+      border: 1px solid var(--brass-gold);
       border-radius: 2px;
       cursor: pointer;
       min-height: 48px;
@@ -225,96 +251,97 @@
     }
 
     .btn-start {
-      background: linear-gradient(180deg, #2a5a35 0%, #14331d 100%);
-      color: var(--text-gold);
+      background: linear-gradient(180deg, #1c3322 0%, #0c1a10 100%);
+      color: var(--brass-gold);
     }
 
     .btn-start:hover:not(:disabled) {
-      background: linear-gradient(180deg, #357042 0%, #1a4226 100%);
+      background: linear-gradient(180deg, #26472f 0%, #122618 100%);
       box-shadow: 0 0 10px rgba(197, 160, 89, 0.4);
     }
 
     .btn-start:disabled {
-      background: #223326;
-      color: #556658;
-      border-color: #445547;
+      background: #121713;
+      color: #3d4a3f;
+      border-color: #273329;
       cursor: not-allowed;
     }
 
     .btn-stop {
-      background: linear-gradient(180deg, #6e1c1c 0%, #420f0f 100%);
-      color: var(--text-gold);
+      background: linear-gradient(180deg, #4a1515 0%, #260a0a 100%);
+      color: #e0a3a3;
+      border-color: var(--detective-red);
     }
 
     .btn-stop:hover:not(:disabled) {
-      background: linear-gradient(180deg, #872525 0%, #541515 100%);
-      box-shadow: 0 0 10px rgba(197, 160, 89, 0.4);
+      background: linear-gradient(180deg, #631c1c 0%, #380e0e 100%);
+      box-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
     }
 
     .btn-stop:disabled {
-      background: #3b1e1e;
-      color: #614343;
-      border-color: #4a2e2e;
+      background: #211212;
+      color: #4a3030;
+      border-color: #382020;
       cursor: not-allowed;
     }
 
-    /* 상태 메시지 */
+    /* 상태 텍스트 */
     .status-message {
+      font-family: 'Special Elite', cursive;
       text-align: center;
       font-size: 0.88rem;
-      color: var(--text-gold);
+      color: var(--brass-gold);
       min-height: 24px;
       margin-bottom: 16px;
-      font-style: italic;
     }
 
     .error-message {
-      color: #ffb3b3;
-      background-color: #421313;
-      border: 1px solid var(--accent-red);
-      border-radius: 4px;
+      color: #ff9999;
+      background-color: #300c0c;
+      border: 1px solid var(--detective-red);
+      border-radius: 2px;
       padding: 10px;
       margin-bottom: 16px;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       display: none;
     }
 
-    /* 판별 결과 고풍스러운羊皮紙 패널 */
+    /* 증거물 사진/타자기 스티커 형태의 결과 상자 */
     .top-result-box {
-      background-color: var(--paper-bg);
+      background-color: var(--paper-photo);
       background-image: url('https://www.transparenttextures.com/patterns/aged-paper.png');
-      border: 1px solid var(--border-gold);
-      border-radius: 2px;
-      padding: 14px;
+      border: 1px solid #a3927d;
+      border-radius: 1px;
+      padding: 16px;
       text-align: center;
       margin-bottom: 18px;
-      color: var(--text-paper);
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+      color: var(--ink-black);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.6);
+      transform: rotate(-0.5deg); /* 실제 현장 증거 사진 고정 느낌 */
     }
 
     .top-result-label {
-      font-family: 'Cinzel', serif;
+      font-family: 'Special Elite', cursive;
       font-size: 0.78rem;
-      color: #594734;
-      font-weight: 700;
-      letter-spacing: 1px;
+      color: #52463a;
+      letter-spacing: 2px;
     }
 
     .top-result-value {
-      font-size: 1.4rem;
+      font-family: 'Special Elite', 'Noto Serif KR', serif;
+      font-size: 1.45rem;
       font-weight: 700;
-      color: var(--accent-red);
+      color: var(--detective-red);
       margin: 4px 0;
-      font-family: 'Cinzel', 'Noto Serif KR', serif;
     }
 
     .disclaimer {
       font-size: 0.72rem;
-      color: #70604f;
+      color: #615345;
       font-style: italic;
     }
 
-    /* 게이지 프로그레스 바 */
+    /* 수사 게이지 프로그레스 바 */
     .label-container {
       display: flex;
       flex-direction: column;
@@ -324,95 +351,97 @@
     .label-row {
       display: flex;
       flex-direction: column;
-      gap: 4px;
-      background: rgba(0, 0, 0, 0.4);
-      padding: 10px;
-      border: 1px solid rgba(197, 160, 89, 0.3);
-      border-radius: 2px;
+      gap: 6px;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 10px 12px;
+      border: 1px solid #2e2620;
     }
 
     .label-info {
       display: flex;
       justify-content: space-between;
+      font-family: 'Special Elite', 'Noto Serif KR', serif;
       font-size: 0.88rem;
-      color: var(--text-gold);
-      font-family: 'Cinzel', 'Noto Serif KR', serif;
+      color: #d8c3a5;
     }
 
     .progress-bar-bg {
       width: 100%;
-      height: 10px;
-      background-color: #120e0c;
-      border: 1px solid var(--border-gold-dark);
-      border-radius: 2px;
+      height: 8px;
+      background-color: #0d0b0a;
+      border: 1px solid #3d3127;
       overflow: hidden;
     }
 
     .progress-bar-fill {
       height: 100%;
       width: 0%;
-      background: linear-gradient(90deg, #8c6d37 0%, #dfb76c 100%);
+      background: linear-gradient(90deg, #7a5c28 0%, var(--brass-gold) 100%);
       transition: width 0.15s ease-out;
     }
 
     /* 푸터 */
     footer.footer-info {
       text-align: center;
+      font-family: 'Special Elite', cursive;
       font-size: 0.82rem;
-      color: var(--text-muted);
+      color: #736456;
       padding-top: 14px;
-      border-top: 1px dashed var(--border-gold-dark);
+      border-top: 1px dashed #3a3028;
       display: flex;
       justify-content: center;
       gap: 12px;
-      font-family: 'Cinzel', 'Noto Serif KR', serif;
     }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <!-- 헤더 영역 -->
+    <!-- 헤더 -->
     <header class="card">
-      <h1><i class="fa-solid fa-scroll"></i> PROJECT TISSUE <i class="fa-solid fa-scroll"></i></h1>
-      <p class="subtitle">런던 한영외고 화장실의 휴지 부족 사건을 해결할 실시간 AI 감정서</p>
+      <div class="pin"></div>
+      <span class="street-tag">221B BAKER STREET, LONDON</span>
+      <h1>CASE FILE <span>#042</span></h1>
+      <p class="subtitle">프로젝트 휴지: 화장실 잔여 휴지 실시간 추론 수사</p>
     </header>
 
-    <!-- 사건 정보 카드 -->
+    <!-- 사건 브리핑 카드 -->
     <section class="card">
+      <div class="pin"></div>
       <div class="info-list">
         <div class="info-item">
           <i class="fa-solid fa-magnifying-glass"></i>
-          <div><span class="bold">해결할 사건:</span> 화장실 내 휴지 고갈 현상 예방</div>
+          <div><span class="bold">해결 과제:</span> 화장실 휴지 부족 사태 사전 방지</div>
         </div>
         <div class="info-item">
           <i class="fa-solid fa-user-secret"></i>
-          <div><span class="bold">의뢰인:</span> 한영외고 화장실 총괄 관리자</div>
+          <div><span class="bold">의뢰인:</span> 한영외고 화장실 총괄 관리인</div>
         </div>
         <div class="info-item">
-          <i class="fa-solid fa-compass"></i>
-          <div><span class="bold">탐정 AI의 역할:</span> 카메라 조준을 통해 잔여 휴지 유무를 추론 판단</div>
+          <i class="fa-solid fa-microscope"></i>
+          <div><span class="bold">수사 분석관(AI):</span> 현장 카메라인식을 통한 상태 추론 및 단서 제공</div>
         </div>
       </div>
     </section>
 
-    <!-- 메인 감정 체험 구역 -->
+    <!-- 메인 수사 분석 구역 -->
     <main class="card experience-card">
-      <h2 class="experience-title"><i class="fa-solid fa-eye"></i> Real-Time Inspection</h2>
+      <div class="pin"></div>
+      <h2 class="experience-title">[ EVIDENTIAL ANALYSIS ]</h2>
 
       <div class="webcam-container" id="webcam-container">
         <div class="placeholder-content" id="placeholder-text">
-          <i class="fa-solid fa-hat-cowboy-side"></i>
-          <span class="placeholder-text">관찰을 시작하려면 아래 버튼을 누르십시오.</span>
+          <i class="fa-solid fa-compass"></i>
+          <span class="placeholder-text">수사 개시 버튼을 누르면 렌즈 관찰이 시작됩니다.</span>
         </div>
       </div>
 
       <div class="btn-group">
         <button id="start-btn" class="btn btn-start" onclick="init()">
-          <i class="fa-solid fa-play"></i> 관찰 시작
+          <i class="fa-solid fa-play"></i> 수사 개시
         </button>
         <button id="stop-btn" class="btn btn-stop" onclick="stop()" disabled>
-          <i class="fa-solid fa-pause"></i> 중지
+          <i class="fa-solid fa-pause"></i> 일시 중단
         </button>
       </div>
 
@@ -420,33 +449,34 @@
       <div id="error-message" class="error-message"></div>
 
       <div class="top-result-box">
-        <div class="top-result-label">CURRENT DEDUCTION (최종 추론)</div>
+        <div class="top-result-label">- VERDICT DEDUCTION -</div>
         <div class="top-result-value" id="top-result-text">-</div>
-        <div class="disclaimer">* AI의 추론 확률이 항상 완벽한 진실은 아닙니다.</div>
+        <div class="disclaimer">* 본 추론 결과는 AI 추정치이므로 현장 확인이 병행되어야 합니다.</div>
       </div>
 
       <div id="label-container" class="label-container"></div>
     </main>
 
-    <!-- 추론 한계 및 탐정 단서 -->
+    <!-- 수사 주의사항 -->
     <section class="card">
+      <div class="pin"></div>
       <div class="info-list">
         <div class="info-item">
-          <i class="fa-solid fa-mask"></i>
-          <div><span class="bold">추론의 한계:</span> 휴지가 아래로 늘어뜨려져 있지 않은 경우 오류가 발생할 수 있습니다.</div>
+          <i class="fa-solid fa-triangle-exclamation" style="color: var(--brass-gold);"></i>
+          <div><span class="bold">추론 한계:</span> 휴지통 아래로 늘어뜨려진 부분이 없으면 정확한 감지가 어려울 수 있습니다.</div>
         </div>
         <div class="info-item">
-          <i class="fa-solid fa-feather-pointed"></i>
-          <div><span class="bold">현장 교차 검증:</span> 기계의 판단에만 의존하지 마시고, 직접 휴지함 내부를 수색하세요.</div>
+          <i class="fa-solid fa-shoe-prints" style="color: var(--detective-red);"></i>
+          <div><span class="bold">현장 수색 필수:</span> 카메라 단서에만 의존하지 말고, 휴지통 내부를 직접 수색하십시오.</div>
         </div>
       </div>
     </section>
 
     <!-- 푸터 -->
     <footer class="footer-info">
-      <div><span class="bold">TEAM:</span> 팀 휴지</div>
-      <div>•</div>
-      <div><span class="bold">MEMBERS:</span> 정태연, 조수현, 최다흔</div>
+      <div><span class="bold">DETECTIVE TEAM:</span> 팀 휴지</div>
+      <div>|</div>
+      <div><span class="bold">AGENTS:</span> 정태연, 조수현, 최다흔</div>
     </footer>
   </div>
 
@@ -467,13 +497,12 @@
     const webcamContainer = document.getElementById("webcam-container");
     const placeholderText = document.getElementById("placeholder-text");
 
-    // 초기화 및 실행 시작 함수
     async function init() {
       if (isRunning) return;
 
       resetError();
       startBtn.disabled = true;
-      statusMsg.innerText = "고서적 단서(AI 모델)를 분석하는 중입니다...";
+      statusMsg.innerText = "단서 분석 데이터베이스를 로드 중입니다...";
 
       const modelURL = URL + "model.json";
       const metadataURL = URL + "metadata.json";
@@ -482,7 +511,7 @@
         model = await tmImage.load(modelURL, metadataURL);
         maxPredictions = model.getTotalClasses();
 
-        statusMsg.innerText = "렌즈(카메라) 권한을 승인 요청 중입니다...";
+        statusMsg.innerText = "관찰 렌즈 접근 권한을 확인 중입니다...";
 
         const flip = true;
         webcam = new tmImage.Webcam(260, 260, flip);
@@ -491,7 +520,7 @@
 
         isRunning = true;
         stopBtn.disabled = false;
-        statusMsg.innerText = "🔍 실시간 관찰 분석 진행 중...";
+        statusMsg.innerText = "🔍 실시간 현장 분석 진행 중...";
         placeholderText.style.display = "none";
 
         const canvas = webcam.canvas;
@@ -538,7 +567,7 @@
         loop();
 
       } catch (err) {
-        showError("단서를 불러오지 못했거나 렌즈 접근이 거부되었습니다. 권한과 네트워크를 확인해 주십시오.");
+        showError("단서를 로드하지 못했거나 렌즈 접근이 거부되었습니다. 네트워크 및 장치를 확인해 주십시오.");
         stop();
       }
     }
@@ -598,7 +627,7 @@
       placeholderText.style.display = "flex";
       startBtn.disabled = false;
       stopBtn.disabled = true;
-      statusMsg.innerText = "관찰이 일시 중단되었습니다.";
+      statusMsg.innerText = "수사가 일시 중단되었습니다.";
       topResultText.innerText = "-";
       
       const labelContainer = document.getElementById("label-container");

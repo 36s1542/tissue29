@@ -3,86 +3,1186 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BGM Player</title>
+  <title>221B BAKER STREET - INVESTIGATION REPORT</title>
+
+  <!-- TensorFlow.js & Teachable Machine -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8.3/dist/teachablemachine-image.min.js"></script>
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Noto+Serif+KR:wght@400;600;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <style>
-    /* 전체 화면 중앙 정렬 및 배경 */
-    body {
-      margin: 0;
-      padding: 20px;
-      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-      background-color: #f8f9fa;
+    :root {
+      --parchment: #e2d2b4;
+      --ink: #1a1412;
+      --wax-red: #8b0000;
+      --gold-accent: #b89742;
+      --shadow: rgba(0, 0, 0, 0.85);
     }
 
-    /* BGM 버튼 스타일 */
-    .bgm-button {
-      padding: 12px 24px;
-      font-size: 16px;
-      font-weight: 700;
-      color: #ffffff;
-      background-color: #2c3e50;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      transition: all 0.2s ease;
-      display: inline-flex;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Noto Serif KR', serif;
+      background-color: #0d0a08;
+      background-image: 
+        radial-gradient(circle at 50% 50%, rgba(20, 15, 12, 0.85), rgba(5, 3, 2, 0.98)),
+        url('https://www.transparenttextures.com/patterns/dark-wood.png');
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
       align-items: center;
+      padding: 30px 20px;
+    }
+
+    .top-controls {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      z-index: 9999;
+      display: flex;
+      gap: 10px;
+    }
+
+    .control-btn, .lang-select {
+      background: #281d17;
+      color: #b89742;
+      border: 1px solid #b89742;
+      padding: 8px 12px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 4px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .control-btn:hover, .lang-select:hover {
+      background: #8b0000;
+      color: #ffffff;
+    }
+
+    .dossier-container {
+      width: 100%;
+      max-width: 600px;
+      background-color: var(--parchment);
+      background-image: url('https://www.transparenttextures.com/patterns/aged-paper.png');
+      border: 12px solid #281d17;
+      border-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png') 30 round;
+      box-shadow: 0 20px 50px var(--shadow), 0 0 15px rgba(184, 151, 66, 0.2);
+      padding: 36px 30px;
+      position: relative;
+      border-radius: 4px;
+    }
+
+    .dossier-container::before {
+      content: '';
+      position: absolute;
+      top: 8px; left: 8px; right: 8px; bottom: 8px;
+      border: 2px solid var(--gold-accent);
+      pointer-events: none;
+    }
+
+    .dossier-header {
+      text-align: center;
+      border-bottom: 2px double var(--ink);
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+    }
+
+    .dossier-header h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      letter-spacing: 3px;
+      color: var(--wax-red);
+    }
+
+    .dossier-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--ink);
+      margin-top: 4px;
+    }
+
+    .page {
+      display: none;
+      flex-direction: column;
+      gap: 18px;
+      animation: fadeIn 0.4s ease-in-out forwards;
+    }
+
+    .page.active { display: flex; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .page-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.05rem;
+      border-bottom: 1px solid var(--ink);
+      padding-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
       gap: 8px;
     }
 
-    .bgm-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    label { font-size: 0.9rem; font-weight: 700; color: #2c2018; }
+
+    input[type="text"], select, textarea {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.4);
+      border: none;
+      border-bottom: 2px solid var(--ink);
+      padding: 8px 10px;
+      font-family: 'Noto Serif KR', serif;
+      font-size: 0.92rem;
+      color: var(--ink);
+      outline: none;
     }
 
-    .bgm-button:active {
-      transform: translateY(0);
+    textarea { resize: vertical; border: 1px solid var(--ink); height: 75px; line-height: 1.4; }
+
+    .checkbox-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      background: rgba(0, 0, 0, 0.04);
+      padding: 10px 12px;
+      border: 1px dashed var(--ink);
     }
 
-    /* 재생 중 상태 색상 */
-    .bgm-button.playing {
-      background-color: #27ae60;
+    .checkbox-group label {
+      font-weight: normal;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
 
-    /* 일시정지 상태 색상 */
-    .bgm-button.paused {
-      background-color: #e74c3c;
+    .signature-pad {
+      width: 100%;
+      height: 100px;
+      background: rgba(255, 255, 255, 0.6);
+      border: 1px dashed var(--ink);
+      cursor: crosshair;
+      touch-action: none;
+    }
+
+    .wax-seal-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .wax-seal-btn {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #a81313, var(--wax-red), #4a0000);
+      box-shadow: 0 4px 8px var(--shadow);
+      border: 3px solid #6b0000;
+      color: var(--gold-accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .wax-seal-btn.stamped {
+      background: radial-gradient(circle at 30% 30%, #520000, #2b0000);
+      border-color: var(--gold-accent);
+      transform: scale(0.95);
+    }
+
+    .btn-nav {
+      background: #281d17;
+      color: var(--parchment);
+      border: 1px solid var(--gold-accent);
+      padding: 12px 18px;
+      font-family: 'Cinzel', 'Noto Serif KR', serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: all 0.2s;
+    }
+
+    .btn-nav:hover { background: var(--wax-red); color: #fff; }
+
+    .webcam-box {
+      width: 200px;
+      height: 200px;
+      margin: 10px auto;
+      border: 4px solid var(--ink);
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .webcam-box canvas { width: 100% !important; height: 100% !important; object-fit: cover; }
+
+    .report-paper {
+      background: #d8c3a5;
+      border: 2px solid var(--ink);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .report-title {
+      font-family: 'Cinzel', serif;
+      text-align: center;
+      font-size: 1.25rem;
+      font-weight: 900;
+      border-bottom: 2px solid var(--ink);
+      padding-bottom: 8px;
+      letter-spacing: 1px;
+    }
+
+    .report-section {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      border-bottom: 1px dashed #a3927c;
+      padding-bottom: 8px;
+    }
+
+    .report-row {
+      font-size: 0.88rem;
+      display: flex;
+      justify-content: space-between;
+      line-height: 1.4;
+    }
+
+    .report-row span.label {
+      font-weight: bold;
+      color: #2c2018;
+      min-width: 90px;
+    }
+
+    .report-row span.val {
+      text-align: right;
+      color: var(--ink);
+    }
+
+    .sherlock-deduction-box {
+      border: 2px double var(--wax-red);
+      background: rgba(139, 0, 0, 0.04);
+      padding: 14px;
+      font-size: 0.86rem;
+      line-height: 1.6;
+    }
+
+    .sherlock-deduction-box h4 {
+      font-family: 'Cinzel', serif;
+      color: var(--wax-red);
+      margin-bottom: 8px;
+      text-align: center;
+      font-size: 0.95rem;
+      letter-spacing: 1px;
+    }
+
+    .sherlock-deduction-box p {
+      text-align: justify;
+      text-indent: 10px;
+      color: #1a1412;
+    }
+
+    .error-text { color: var(--wax-red); font-size: 0.8rem; display: none; }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: var(--parchment);
+      border: 8px solid #281d17;
+      padding: 24px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: 0 0 30px #000;
+    }
+
+    #youtube-bgm-container {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      left: -9999px;
     }
   </style>
 </head>
 <body>
 
-  <!-- BGM 버튼 -->
-  <button id="bgmBtn" class="bgm-button" onclick="toggleBgm()">
-    <span>▶</span> <span id="btnText">BGM START</span>
-  </button>
+  <!-- 상단 컨트롤 (언어 선택 & BGM 버튼) -->
+  <div class="top-controls">
+    <select class="lang-select" id="lang-select" onchange="changeLanguage(this.value)">
+      <option value="ko">🇰🇷 한국어</option>
+      <option value="en">🇺🇸 English</option>
+      <option value="es">🇪🇸 Español</option>
+    </select>
+    <button class="control-btn" id="bgm-toggle-btn" onclick="toggleBGM()">
+      <i class="fa-solid fa-music"></i> <span id="bgm-btn-text">BGM START</span>
+    </button>
+  </div>
 
-  <!-- 오디오 태그 (안정성이 검증된 클래식 MP3 음원) -->
-  <audio id="bgmAudio" loop preload="auto">
-    <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3" type="audio/mpeg">
-    브라우저가 오디오 태그를 지원하지 않습니다.
-  </audio>
+  <div id="youtube-bgm-container">
+    <div id="yt-player"></div>
+  </div>
 
+  <div class="dossier-container">
+    <header class="dossier-header">
+      <h2>221B BAKER STREET DOSSIER</h2>
+      <h1>PROJECT TISSUE</h1>
+    </header>
+
+    <!-- PAGE 1 -->
+    <div class="page active" id="page-1">
+      <div class="page-title">
+        <span data-i18n="p1_title">I. 의뢰인 신원 정보</span>
+        <span>01/05</span>
+      </div>
+      <div class="form-group">
+        <label data-i18n="p1_school_label">소속 기관</label>
+        <input type="text" id="school" value="한영외국어고등학교" readonly>
+      </div>
+      <div class="form-group">
+        <label data-i18n="p1_id_label">의뢰인 학번 (필수)</label>
+        <input type="text" id="student-id" data-i18n-ph="p1_id_ph" placeholder="학번을 입력하십시오">
+      </div>
+      <div class="form-group">
+        <label data-i18n="p1_name_label">의뢰인 성명 (필수)</label>
+        <input type="text" id="student-name" data-i18n-ph="p1_name_ph" placeholder="성명을 입력하십시오">
+      </div>
+      <p class="error-text" id="err-1" data-i18n="err_1">모든 신원 정보를 빠짐없이 작성해야 합니다.</p>
+      <button class="btn-nav" onclick="nextPage(1)" data-i18n="btn_next_1">다음: 장소 및 단서 선택 ▸</button>
+    </div>
+
+    <!-- PAGE 2 -->
+    <div class="page" id="page-2">
+      <div class="page-title">
+        <span data-i18n="p2_title">II. 수사 장소 및 목격 단서</span>
+        <span>02/05</span>
+      </div>
+      
+      <div class="form-group">
+        <label data-i18n="p2_b_label">1. 건물 선택 (필수)</label>
+        <div class="checkbox-group">
+          <label><input type="radio" name="building" value="본관"> <span data-i18n="b_main">본관</span></label>
+          <label><input type="radio" name="building" value="서관"> <span data-i18n="b_west">서관</span></label>
+          <label><input type="radio" name="building" value="동관"> <span data-i18n="b_east">동관</span></label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label data-i18n="p2_f_label">2. 층수 선택 (필수)</label>
+        <div class="checkbox-group">
+          <label><input type="radio" name="floor" value="1층"> 1F</label>
+          <label><input type="radio" name="floor" value="2층"> 2F</label>
+          <label><input type="radio" name="floor" value="3층"> 3F</label>
+          <label><input type="radio" name="floor" value="4층"> 4F</label>
+          <label><input type="radio" name="floor" value="5층"> 5F</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label data-i18n="p2_g_label">3. 구분 선택 (필수)</label>
+        <div class="checkbox-group">
+          <label><input type="radio" name="gender" value="여자 화장실"> <span data-i18n="g_female">여자 화장실</span></label>
+          <label><input type="radio" name="gender" value="남자 화장실"> <span data-i18n="g_male">남자 화장실</span></label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label data-i18n="p2_clue_label">4. 현장 목격 단서 (필수)</label>
+        <select id="clue-select" onchange="toggleCustomClue()">
+          <option value="" data-i18n="clue_opt_default">-- 발견된 단서를 선택하십시오 --</option>
+          <option value="opt1" data-i18n="clue_opt_1">휴지심만 덩그러니 남음</option>
+          <option value="opt2" data-i18n="clue_opt_2">잔여량이 조만간 소진될 것으로 보임</option>
+          <option value="opt3" data-i18n="clue_opt_3">휴지가 거치대에서 무단 이탈함</option>
+          <option value="custom" data-i18n="clue_opt_custom">기타 (직접 주관식 입력)</option>
+        </select>
+      </div>
+      <div class="form-group" id="custom-clue-group" style="display: none;">
+        <input type="text" id="custom-clue" data-i18n-ph="custom_clue_ph" placeholder="목격한 단서를 직접 적으시오">
+      </div>
+
+      <p class="error-text" id="err-2" data-i18n="err_2">장소 항목들과 단서를 빠짐없이 선택해야 합니다.</p>
+      <button class="btn-nav" onclick="nextPage(2)" data-i18n="btn_next_2">다음: 사건 경위 & 용의자 ▸</button>
+    </div>
+
+    <!-- PAGE 3 -->
+    <div class="page" id="page-3">
+      <div class="page-title">
+        <span data-i18n="p3_title">III. 사건 경위 및 용의자</span>
+        <span>03/05</span>
+      </div>
+      <div class="form-group">
+        <label data-i18n="p3_detail_label">사건 상세 경위 진술 (필수)</label>
+        <textarea id="case-details" data-i18n-ph="p3_detail_ph" placeholder="어떤 정황으로 휴지 사건이 발생했는지 적으시오..."></textarea>
+      </div>
+      <div class="form-group">
+        <label data-i18n="p3_suspect_label">유력 의심 용의자 (필수)</label>
+        <select id="suspect">
+          <option value="" data-i18n="suspect_default">-- 의심 인물을 선택하십시오 --</option>
+          <option value="s1" data-i18n="suspect_1">쉬는시간 대량 사용 학생</option>
+          <option value="s2" data-i18n="suspect_2">청소 점검 미이행 관계자</option>
+          <option value="s3" data-i18n="suspect_3">시험기간 고카페인 중독자</option>
+          <option value="s4" data-i18n="suspect_4">익명의 휴지 절도범</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label data-i18n="p3_reason_label">용의선상 선정 이유 (필수)</label>
+        <textarea id="suspect-reason" data-i18n-ph="p3_reason_ph" placeholder="해당 대상을 의심하는 이유를 적으시오..."></textarea>
+      </div>
+      <p class="error-text" id="err-3" data-i18n="err_3">모든 진술 및 용의자 정보를 입력해야 합니다.</p>
+      <button class="btn-nav" onclick="nextPage(3)" data-i18n="btn_next_3">다음: 서명 및 실링왁스 ▸</button>
+    </div>
+
+    <!-- PAGE 4 -->
+    <div class="page" id="page-4">
+      <div class="page-title">
+        <span data-i18n="p4_title">IV. 기밀 서약 & 실링</span>
+        <span>04/05</span>
+      </div>
+      <div class="form-group">
+        <label data-i18n="p4_sig_label">의뢰인 친필 서명 (손가락/마우스)</label>
+        <canvas id="sig-canvas" class="signature-pad"></canvas>
+        <button class="btn-clear" style="align-self:flex-end; background:none; border:none; text-decoration:underline; cursor:pointer;" onclick="clearSignature()" data-i18n="btn_clear">지우기</button>
+      </div>
+      <div class="wax-seal-container">
+        <label data-i18n="p4_wax_label">밀봉 실링왁스 인장 (클릭)</label>
+        <div class="wax-seal-btn" id="wax-btn" onclick="stampWax()">
+          <i class="fa-solid fa-stamp"></i>
+        </div>
+        <span id="wax-status" style="font-size:0.8rem;" data-i18n="wax_status_off">인장이 찍히지 않았습니다</span>
+      </div>
+      <p class="error-text" id="err-4" data-i18n="err_4">서명과 실링왁스 인장이 모두 필요합니다.</p>
+      <button class="btn-nav" onclick="startInvestigation()" data-i18n="btn_next_4">스캔 및 셜록 추론 개시 ▸</button>
+    </div>
+
+    <!-- PAGE 5 -->
+    <div class="page" id="page-5">
+      <div class="page-title">
+        <span data-i18n="p5_title">V. 렌즈 스캔 & AI 추리</span>
+        <span>SCANNING</span>
+      </div>
+      <div class="webcam-box" id="webcam-box">
+        <span style="color:#aaa; font-size:0.85rem;" data-i18n="cam_init">렌즈 초기화 중...</span>
+      </div>
+      <div style="text-align:center; font-size:0.9rem; color:var(--wax-red); font-weight:bold;" id="scan-status" data-i18n="cam_anal">
+        카메라 분석 중...
+      </div>
+      <button class="btn-nav" onclick="generateReport()" data-i18n="btn_next_5">최종 탐정 보고서 발급 ▸</button>
+    </div>
+
+    <!-- PAGE 6 -->
+    <div class="page" id="page-6">
+      <div class="report-paper">
+        <div class="report-title">OFFICIAL INVESTIGATION REPORT</div>
+        
+        <div class="report-section">
+          <div class="report-row"><span class="label" data-i18n="rep_lbl_client">의뢰인:</span><span class="val" id="rep-client">-</span></div>
+          <div class="report-row"><span class="label" data-i18n="rep_lbl_loc">수사 장소:</span><span class="val" id="rep-location">-</span></div>
+          <div class="report-row"><span class="label" data-i18n="rep_lbl_clue">현장 단서:</span><span class="val" id="rep-clue">-</span></div>
+        </div>
+
+        <div class="sherlock-deduction-box">
+          <h4>SHERLOCK HOLMES DEDUCTION</h4>
+          <p id="rep-deduction-text">Deducting...</p>
+        </div>
+
+        <div class="report-row" style="padding-top: 4px;"><span class="label" data-i18n="rep_lbl_verdict">렌즈 스캔 판정:</span><strong class="val" id="rep-verdict" style="color:var(--wax-red);">-</strong></div>
+
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:10px;">
+          <div>
+            <div style="font-size:0.7rem; color:#555; margin-bottom:2px;">CLIENT SIGNATURE</div>
+            <img id="rep-sig-img" style="max-width:110px; max-height:45px; border-bottom:1px solid #000;" alt="Signature">
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:0.7rem; color:#555; margin-bottom:2px;">221B SEAL</div>
+            <div style="width:40px; height:40px; border-radius:50%; background:var(--wax-red); color:var(--gold-accent); display:flex; align-items:center; justify-content:center; border:2px solid var(--gold-accent);">
+              <i class="fa-solid fa-crown" style="font-size:0.9rem;"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-nav" style="background:#8b0000; color:#fff;" onclick="openNdaModal()" data-i18n="btn_open_archive">🔒 수사 보고서 누적 보관함 열람</button>
+      <button class="btn-nav" style="background:#281d17;" onclick="location.reload()" data-i18n="btn_restart">새 사건 의뢰하기</button>
+    </div>
+  </div>
+
+  <!-- NDA Modal -->
+  <div class="modal-overlay" id="nda-modal">
+    <div class="modal-content">
+      <h2 style="font-family:'Cinzel'; text-align:center; border-bottom:2px solid var(--ink); padding-bottom:8px;">221B NON-DISCLOSURE AGREEMENT</h2>
+      <p style="font-size:0.85rem; line-height:1.5;" data-i18n="nda_text">
+        본 서약서는 221B Baker Street 탐정 사무소의 보안 문서입니다. 누적 기록된 의뢰인들의 수사 기록 및 본 사무소의 추리 기법에 관한 정보는 제3자에게 누설할 수 없습니다.
+      </p>
+      
+      <div class="form-group" style="margin-top:4px;">
+        <label><input type="checkbox" id="nda-check"> <span data-i18n="nda_agree">위의 기밀 유지 조항을 숙지하였으며 이에 동의합니다.</span></label>
+      </div>
+
+      <div class="form-group">
+        <label data-i18n="nda_sig_label">열람자 친필 서명 (손가락/마우스)</label>
+        <canvas id="nda-canvas" class="signature-pad" style="height:70px;"></canvas>
+      </div>
+
+      <p class="error-text" id="nda-err" data-i18n="nda_err">동의 체크와 서명이 완료되어야 서약이 승인됩니다.</p>
+      <button class="btn-nav" onclick="verifyNdaAndShowArchive()" data-i18n="btn_approve_nda">서약 승인 및 보고서 보관함 열람 ▸</button>
+      <button class="btn-nav" style="background:#555;" onclick="closeNdaModal()" data-i18n="btn_close">닫기</button>
+    </div>
+  </div>
+
+  <!-- Archive Modal -->
+  <div class="modal-overlay" id="archive-modal">
+    <div class="modal-content" style="max-width:540px;">
+      <h2 style="font-family:'Cinzel'; text-align:center; border-bottom:2px solid var(--ink); padding-bottom:8px;">CONFIDENTIAL ARCHIVES</h2>
+      <div id="archive-list" style="display:flex; flex-direction:column; gap:12px; margin-top:10px;"></div>
+      <button class="btn-nav" onclick="closeArchiveModal()" data-i18n="btn_close">닫기</button>
+    </div>
+  </div>
+
+  <!-- 다국어 딕셔너리 -->
   <script>
-    const audio = document.getElementById('bgmAudio');
-    const btn = document.getElementById('bgmBtn');
-    const btnText = document.getElementById('btnText');
+    let currentLang = 'ko';
 
-    function toggleBgm() {
-      if (audio.paused) {
-        // 재생 시도
-        audio.play().then(() => {
-          btnText.innerText = "BGM ON (클릭시 OFF)";
-          btn.className = "bgm-button playing";
-        }).catch((error) => {
-          console.error("재생 에러:", error);
-          alert("오디오를 재생할 수 없습니다. 페이지를 다시 불러와주세요.");
-        });
+    const i18n = {
+      ko: {
+        bgm_start: "BGM START",
+        bgm_on: "BGM ON",
+        bgm_off: "BGM OFF",
+        school_name: "한영외국어고등학교",
+        p1_title: "I. 의뢰인 신원 정보",
+        p1_school_label: "소속 기관",
+        p1_id_label: "의뢰인 학번 (필수)",
+        p1_id_ph: "학번을 입력하십시오",
+        p1_name_label: "의뢰인 성명 (필수)",
+        p1_name_ph: "성명을 입력하십시오",
+        err_1: "모든 신원 정보를 빠짐없이 작성해야 합니다.",
+        btn_next_1: "다음: 장소 및 단서 선택 ▸",
+
+        p2_title: "II. 수사 장소 및 목격 단서",
+        p2_b_label: "1. 건물 선택 (필수)",
+        b_main: "본관", b_west: "서관", b_east: "동관",
+        p2_f_label: "2. 층수 선택 (필수)",
+        p2_g_label: "3. 구분 선택 (필수)",
+        g_female: "여자 화장실", g_male: "남자 화장실",
+        p2_clue_label: "4. 현장 목격 단서 (필수)",
+        clue_opt_default: "-- 발견된 단서를 선택하십시오 --",
+        clue_opt_1: "휴지심만 덩그러니 남음",
+        clue_opt_2: "잔여량이 조만간 소진될 것으로 보임",
+        clue_opt_3: "휴지가 거치대에서 무단 이탈함",
+        clue_opt_custom: "기타 (직접 주관식 입력)",
+        custom_clue_ph: "목격한 단서를 직접 적으시오",
+        err_2: "장소 항목들과 단서를 빠짐없이 선택해야 합니다.",
+        btn_next_2: "다음: 사건 경위 & 용의자 ▸",
+
+        p3_title: "III. 사건 경위 및 용의자",
+        p3_detail_label: "사건 상세 경위 진술 (필수)",
+        p3_detail_ph: "어떤 정황으로 휴지 사건이 발생했는지 적으시오...",
+        p3_suspect_label: "유력 의심 용의자 (필수)",
+        suspect_default: "-- 의심 인물을 선택하십시오 --",
+        suspect_1: "쉬는시간 대량 사용 학생",
+        suspect_2: "청소 점검 미이행 관계자",
+        suspect_3: "시험기간 고카페인 중독자",
+        suspect_4: "익명의 휴지 절도범",
+        p3_reason_label: "용의선상 선정 이유 (필수)",
+        p3_reason_ph: "해당 대상을 의심하는 이유를 적으시오...",
+        err_3: "모든 진술 및 용의자 정보를 입력해야 합니다.",
+        btn_next_3: "다음: 서명 및 실링왁스 ▸",
+
+        p4_title: "IV. 기밀 서약 & 실링",
+        p4_sig_label: "의뢰인 친필 서명 (손가락/마우스)",
+        btn_clear: "지우기",
+        p4_wax_label: "밀봉 실링왁스 인장 (클릭)",
+        wax_status_off: "인장이 찍히지 않았습니다",
+        wax_status_on: "밀봉 완료 (221B SEAL)",
+        err_4: "서명과 실링왁스 인장이 모두 필요합니다.",
+        btn_next_4: "스캔 및 셜록 추론 개시 ▸",
+
+        p5_title: "V. 렌즈 스캔 & AI 추리",
+        cam_init: "렌즈 초기화 중...",
+        cam_anal: "카메라 분석 중...",
+        btn_next_5: "최종 탐정 보고서 발급 ▸",
+
+        rep_lbl_client: "의뢰인:",
+        rep_lbl_loc: "수사 장소:",
+        rep_lbl_clue: "현장 단서:",
+        rep_lbl_verdict: "렌즈 스캔 판정:",
+        btn_open_archive: "🔒 수사 보고서 누적 보관함 열람",
+        btn_restart: "새 사건 의뢰하기",
+
+        nda_text: "본 서약서는 221B Baker Street 탐정 사무소의 보안 문서입니다. 누적 기록된 의뢰인들의 수사 기록 및 본 사무소의 추리 기법에 관한 정보는 제3자에게 누설할 수 없습니다.",
+        nda_agree: "위의 기밀 유지 조항을 숙지하였으며 이에 동의합니다.",
+        nda_sig_label: "열람자 친필 서명 (손가락/마우스)",
+        nda_err: "동의 체크와 서명이 완료되어야 서약이 승인됩니다.",
+        btn_approve_nda: "서약 승인 및 보고서 보관함 열람 ▸",
+        btn_close: "닫기",
+
+        arch_loading: "서버에서 사건 기록을 가져오는 중...",
+        arch_empty: "보관된 수사 보고서가 존재하지 않습니다.",
+        arch_lbl_loc: "수사 장소", arch_lbl_suspect: "지목 용의자", arch_lbl_deduction: "셜록 추리", arch_lbl_verdict: "AI 판정"
+      },
+      en: {
+        bgm_start: "BGM START",
+        bgm_on: "BGM ON",
+        bgm_off: "BGM OFF",
+        school_name: "Hanyoung Foreign Language High School",
+        p1_title: "I. CLIENT IDENTIFICATION",
+        p1_school_label: "Institution",
+        p1_id_label: "Student ID (Required)",
+        p1_id_ph: "Enter your student ID",
+        p1_name_label: "Client Full Name (Required)",
+        p1_name_ph: "Enter your name",
+        err_1: "Please fill out all identification fields.",
+        btn_next_1: "Next: Location & Clue ▸",
+
+        p2_title: "II. LOCATION & CLUES",
+        p2_b_label: "1. Select Building (Required)",
+        b_main: "Main Bldg", b_west: "West Bldg", b_east: "East Bldg",
+        p2_f_label: "2. Select Floor (Required)",
+        p2_g_label: "3. Select Division (Required)",
+        g_female: "Women's Restroom", g_male: "Men's Restroom",
+        p2_clue_label: "4. Observed Clue (Required)",
+        clue_opt_default: "-- Select an observed clue --",
+        clue_opt_1: "Empty cardboard roll left behind",
+        clue_opt_2: "Tissue low, running out soon",
+        clue_opt_3: "Tissue roll misplaced from holder",
+        clue_opt_custom: "Other (Specify manually)",
+        custom_clue_ph: "Describe the observed clue",
+        err_2: "Please select all location details and a clue.",
+        btn_next_2: "Next: Case Details & Suspect ▸",
+
+        p3_title: "III. DETAILS & SUSPECT",
+        p3_detail_label: "Case Details Statement (Required)",
+        p3_detail_ph: "Describe how the tissue incident occurred...",
+        p3_suspect_label: "Prime Suspect (Required)",
+        suspect_default: "-- Select a suspect --",
+        suspect_1: "Student hoarding tissue during break",
+        suspect_2: "Cleaning staff skipping inspection",
+        suspect_3: "Over-caffeinated student during exam week",
+        suspect_4: "Anonymous tissue thief",
+        p3_reason_label: "Reason for Suspicion (Required)",
+        p3_reason_ph: "State why you suspect this target...",
+        err_3: "Please provide all statements and suspect details.",
+        btn_next_3: "Next: Signature & Wax Seal ▸",
+
+        p4_title: "IV. NDA & WAX SEAL",
+        p4_sig_label: "Client Signature (Finger/Mouse)",
+        btn_clear: "Clear",
+        p4_wax_label: "Press Wax Seal (Click)",
+        wax_status_off: "Not sealed yet",
+        wax_status_on: "Sealed (221B SEAL)",
+        err_4: "Both signature and wax seal are required.",
+        btn_next_4: "Start Scanning & Deduction ▸",
+
+        p5_title: "V. SCANNING & AI DEDUCTION",
+        cam_init: "Initializing lens...",
+        cam_anal: "Analyzing camera feed...",
+        btn_next_5: "Generate Final Report ▸",
+
+        rep_lbl_client: "Client:",
+        rep_lbl_loc: "Location:",
+        rep_lbl_clue: "Clue:",
+        rep_lbl_verdict: "Lens Verdict:",
+        btn_open_archive: "🔒 Open Confidential Archives",
+        btn_restart: "File New Case",
+
+        nda_text: "This document is a confidential record of 221B Baker Street. You shall not disclose any case archives or detective methodology to third parties.",
+        nda_agree: "I have read and agree to the non-disclosure terms above.",
+        nda_sig_label: "Reviewer Signature (Finger/Mouse)",
+        nda_err: "Agreement and signature are required to proceed.",
+        btn_approve_nda: "Approve NDA & Open Archives ▸",
+        btn_close: "Close",
+
+        arch_loading: "Fetching records from server...",
+        arch_empty: "No confidential reports archived.",
+        arch_lbl_loc: "Location", arch_lbl_suspect: "Suspect", arch_lbl_deduction: "Deduction", arch_lbl_verdict: "Verdict"
+      },
+      es: {
+        bgm_start: "BGM START",
+        bgm_on: "BGM ON",
+        bgm_off: "BGM OFF",
+        school_name: "Escuela Secundaria de Lenguas Extranjeras Hanyoung",
+        p1_title: "I. IDENTIFICACIÓN DEL CLIENTE",
+        p1_school_label: "Institución",
+        p1_id_label: "ID de Estudiante (Obligatorio)",
+        p1_id_ph: "Ingrese su ID de estudiante",
+        p1_name_label: "Nombre Completo (Obligatorio)",
+        p1_name_ph: "Ingrese su nombre",
+        err_1: "Por favor complete todos los campos de identificación.",
+        btn_next_1: "Siguiente: Lugar y Pista ▸",
+
+        p2_title: "II. LUGAR Y PISTAS",
+        p2_b_label: "1. Seleccione Edificio (Obligatorio)",
+        b_main: "Edificio Principal", b_west: "Edificio Oeste", b_east: "Edificio Este",
+        p2_f_label: "2. Seleccione Piso (Obligatorio)",
+        p2_g_label: "3. Seleccione División (Obligatorio)",
+        g_female: "Baño de Mujeres", g_male: "Baño de Hombres",
+        p2_clue_label: "4. Pista Observada (Obligatorio)",
+        clue_opt_default: "-- Seleccione una pista observada --",
+        clue_opt_1: "Solo quedó el tubo de cartón vacío",
+        clue_opt_2: "Poco papel, se agotará pronto",
+        clue_opt_3: "El papel fue retirado del soporte",
+        clue_opt_custom: "Otro (Especificar manualmente)",
+        custom_clue_ph: "Describa la pista observada",
+        err_2: "Seleccione todos los detalles del lugar y una pista.",
+        btn_next_2: "Siguiente: Detalle y Sospechoso ▸",
+
+        p3_title: "III. DETALLES Y SOSPECHOSO",
+        p3_detail_label: "Declaración del Caso (Obligatorio)",
+        p3_detail_ph: "Describa cómo ocurrió el incidente del papel...",
+        p3_suspect_label: "Sospechoso Principal (Obligatorio)",
+        suspect_default: "-- Seleccione un sospechoso --",
+        suspect_1: "Estudiante que acapara papel en el receso",
+        suspect_2: "Personal de limpieza que omitió la revisión",
+        suspect_3: "Estudiante con exceso de cafeína en exámenes",
+        suspect_4: "Ladrón de papel anónimo",
+        p3_reason_label: "Motivo de Sospecha (Obligatorio)",
+        p3_reason_ph: "Indique por qué sospecha de este objetivo...",
+        err_3: "Por favor complete la declaración y el sospechoso.",
+        btn_next_3: "Siguiente: Firma y Sello de Cera ▸",
+
+        p4_title: "IV. ACUERDO Y SELLO DE CERA",
+        p4_sig_label: "Firma del Cliente (Dedo/Mouse)",
+        btn_clear: "Borrar",
+        p4_wax_label: "Presionar Sello de Cera (Clic)",
+        wax_status_off: "Aún no sellado",
+        wax_status_on: "Sellado (221B SEAL)",
+        err_4: "Se requiere tanto la firma como el sello de cera.",
+        btn_next_4: "Iniciar Escaneo y Deducción ▸",
+
+        p5_title: "V. ESCANEO Y DEDUCCIÓN IA",
+        cam_init: "Inicializando lente...",
+        cam_anal: "Analizando transmisión de cámara...",
+        btn_next_5: "Generar Informe Final ▸",
+
+        rep_lbl_client: "Cliente:",
+        rep_lbl_loc: "Lugar:",
+        rep_lbl_clue: "Pista:",
+        rep_lbl_verdict: "Veredicto del Lente:",
+        btn_open_archive: "🔒 Abrir Archivos Confidenciales",
+        btn_restart: "Registrar Nuevo Caso",
+
+        nda_text: "Este documento es un registro confidencial de 221B Baker Street. No revelará los archivos de casos ni la metodología de deducción a terceros.",
+        nda_agree: "He leído y acepto los términos de confidencialidad anteriores.",
+        nda_sig_label: "Firma del Revisor (Dedo/Mouse)",
+        nda_err: "Se requiere la aceptación y la firma para continuar.",
+        btn_approve_nda: "Aprobar Acuerdo y Abrir Archivos ▸",
+        btn_close: "Cerrar",
+
+        arch_loading: "Obteniendo registros del servidor...",
+        arch_empty: "No hay informes confidenciales archivados.",
+        arch_lbl_loc: "Lugar", arch_lbl_suspect: "Sospechoso", arch_lbl_deduction: "Deducción", arch_lbl_verdict: "Veredicto"
+      }
+    };
+
+    function changeLanguage(lang) {
+      currentLang = lang;
+      const dict = i18n[lang];
+
+      document.getElementById("school").value = dict.school_name;
+
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (dict[key]) el.innerText = dict[key];
+      });
+
+      document.querySelectorAll("[data-i18n-ph]").forEach(el => {
+        const key = el.getAttribute("data-i18n-ph");
+        if (dict[key]) el.placeholder = dict[key];
+      });
+
+      if (isWaxStamped) {
+        document.getElementById("wax-status").innerText = dict.wax_status_on;
       } else {
-        // 일시정지
-        audio.pause();
-        btnText.innerText = "BGM OFF (클릭시 ON)";
-        btn.className = "bgm-button paused";
+        document.getElementById("wax-status").innerText = dict.wax_status_off;
+      }
+
+      updateBgmBtnText();
+    }
+  </script>
+
+  <!-- YouTube BGM API Script (수정완료) -->
+  <script>
+    const YOUTUBE_BGM_ID = "yatKu8DGhRs"; // 요청하신 음악 주소 ID
+    let ytPlayer = null;
+    let isBgmPlaying = false;
+    let isPlayerReady = false;
+
+    // 유튜브 API 로드
+    const tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    const firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    function onYouTubeIframeAPIReady() {
+      ytPlayer = new YT.Player('yt-player', {
+        height: '0',
+        width: '0',
+        videoId: YOUTUBE_BGM_ID,
+        playerVars: {
+          'autoplay': 0,
+          'loop': 1,
+          'playlist': YOUTUBE_BGM_ID,
+          'controls': 0,
+          'disablekb': 1
+        },
+        events: {
+          'onReady': onPlayerReady
+        }
+      });
+    }
+
+    function onPlayerReady(event) {
+      isPlayerReady = true;
+    }
+
+    function updateBgmBtnText() {
+      const btnTextElem = document.getElementById("bgm-btn-text");
+      const dict = i18n[currentLang];
+      if (!isBgmPlaying) {
+        btnTextElem.innerText = dict.bgm_off;
+      } else {
+        btnTextElem.innerText = dict.bgm_on;
+      }
+    }
+
+    function toggleBGM() {
+      if (!isPlayerReady || !ytPlayer) {
+        alert("BGM을 준비 중입니다. 잠시 후 다시 클릭해주세요.");
+        return;
+      }
+
+      const btnTextElem = document.getElementById("bgm-btn-text");
+      const dict = i18n[currentLang];
+
+      if (isBgmPlaying) {
+        ytPlayer.pauseVideo();
+        isBgmPlaying = false;
+        btnTextElem.innerText = dict.bgm_off;
+      } else {
+        ytPlayer.unMute();
+        ytPlayer.playVideo();
+        isBgmPlaying = true;
+        btnTextElem.innerText = dict.bgm_on;
+      }
+    }
+  </script>
+
+  <!-- Main Application Logic -->
+  <script>
+    const JSONBIN_BIN_ID = "6aa20663ffd5d16053f420f4";
+    const JSONBIN_API_KEY = "$2a$10$YhUmu6npt3HeBGzgQEPy5ei80W0DGV1DZWdSKOm10mCkZAGcL8Xeu";
+    const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
+
+    const MODEL_URL = "https://teachablemachine.withgoogle.com/models/FFJ6T1Fe1/";
+    let isWaxStamped = false;
+    let model, webcam, maxPredictions;
+    let finalScanResult = "Analyzing...";
+
+    const sigCanvas = document.getElementById("sig-canvas");
+    const ctx = sigCanvas.getContext("2d");
+    let isSigning = false, hasSig = false;
+
+    const ndaCanvas = document.getElementById("nda-canvas");
+    const ndaCtx = ndaCanvas.getContext("2d");
+    let isNdaSigning = false, hasNdaSig = false;
+
+    function initCanvases() {
+      [sigCanvas, ndaCanvas].forEach(c => {
+        c.width = c.offsetWidth;
+        c.height = c.offsetHeight;
+      });
+      ctx.lineWidth = 2.5; ctx.strokeStyle = "#1a1412"; ctx.lineCap = "round";
+      ndaCtx.lineWidth = 2.5; ndaCtx.strokeStyle = "#8b0000"; ndaCtx.lineCap = "round";
+    }
+    window.addEventListener("load", initCanvases);
+    window.addEventListener("resize", initCanvases);
+
+    function getPos(e, canvas) {
+      const rect = canvas.getBoundingClientRect();
+      let clientX, clientY;
+      
+      if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
+      }
+      
+      return {
+        x: clientX - rect.left,
+        y: clientY - rect.top
+      };
+    }
+
+    function setupCanvasListeners(canvas, context, setHasSig, getIsSigning, setIsSigning) {
+      const startDraw = (e) => {
+        e.preventDefault();
+        setIsSigning(true);
+        const p = getPos(e, canvas);
+        context.beginPath();
+        context.moveTo(p.x, p.y);
+      };
+
+      const moveDraw = (e) => {
+        if (!getIsSigning()) return;
+        e.preventDefault();
+        const p = getPos(e, canvas);
+        context.lineTo(p.x, p.y);
+        context.stroke();
+        setHasSig(true);
+      };
+
+      const endDraw = (e) => {
+        setIsSigning(false);
+      };
+
+      canvas.addEventListener("mousedown", startDraw);
+      canvas.addEventListener("mousemove", moveDraw);
+      window.addEventListener("mouseup", endDraw);
+
+      canvas.addEventListener("touchstart", startDraw, { passive: false });
+      canvas.addEventListener("touchmove", moveDraw, { passive: false });
+      canvas.addEventListener("touchend", endDraw);
+    }
+
+    setupCanvasListeners(sigCanvas, ctx, (val) => hasSig = val, () => isSigning, (val) => isSigning = val);
+    setupCanvasListeners(ndaCanvas, ndaCtx, (val) => hasNdaSig = val, () => isNdaSigning, (val) => isNdaSigning = val);
+
+    function clearSignature() { ctx.clearRect(0, 0, sigCanvas.width, sigCanvas.height); hasSig = false; }
+    function stampWax() {
+      isWaxStamped = true;
+      document.getElementById("wax-btn").classList.add("stamped");
+      document.getElementById("wax-status").innerText = i18n[currentLang].wax_status_on;
+    }
+
+    function toggleCustomClue() {
+      const select = document.getElementById("clue-select");
+      document.getElementById("custom-clue-group").style.display = (select.value === "custom") ? "block" : "none";
+    }
+
+    function nextPage(curr) {
+      document.querySelectorAll(".error-text").forEach(e => e.style.display = "none");
+
+      if (curr === 1) {
+        if (!document.getElementById("student-id").value.trim() || !document.getElementById("student-name").value.trim()) {
+          document.getElementById("err-1").style.display = "block"; return;
+        }
+      } else if (curr === 2) {
+        const b = document.querySelector('input[name="building"]:checked');
+        const f = document.querySelector('input[name="floor"]:checked');
+        const g = document.querySelector('input[name="gender"]:checked');
+        const c = document.getElementById("clue-select").value;
+        if (!b || !f || !g || !c) { document.getElementById("err-2").style.display = "block"; return; }
+      } else if (curr === 3) {
+        if (!document.getElementById("case-details").value.trim() || !document.getElementById("suspect").value || !document.getElementById("suspect-reason").value.trim()) {
+          document.getElementById("err-3").style.display = "block"; return;
+        }
+      }
+
+      document.getElementById(`page-${curr}`).classList.remove("active");
+      document.getElementById(`page-${curr + 1}`).classList.add("active");
+      if (curr + 1 === 4) setTimeout(initCanvases, 100);
+    }
+
+    async function startInvestigation() {
+      if (!hasSig || !isWaxStamped) { document.getElementById("err-4").style.display = "block"; return; }
+      document.getElementById("page-4").classList.remove("active");
+      document.getElementById("page-5").classList.add("active");
+
+      try {
+        model = await tmImage.load(MODEL_URL + "model.json", MODEL_URL + "metadata.json");
+        maxPredictions = model.getTotalClasses();
+        webcam = new tmImage.Webcam(200, 200, true);
+        await webcam.setup(); await webcam.play();
+        const box = document.getElementById("webcam-box");
+        box.innerHTML = ""; box.appendChild(webcam.canvas);
+        window.requestAnimationFrame(loop);
+      } catch (e) {
+        alert("Error loading camera model.");
+      }
+    }
+
+    async function loop() {
+      if (!webcam) return;
+      webcam.update();
+      const prediction = await model.predict(webcam.canvas);
+      let topProb = -1, topClass = "";
+      for (let i = 0; i < maxPredictions; i++) {
+        if (prediction[i].probability > topProb) {
+          topProb = prediction[i].probability; topClass = prediction[i].className;
+        }
+      }
+      finalScanResult = `${topClass} (${(topProb * 100).toFixed(0)}%)`;
+      document.getElementById("scan-status").innerText = `${i18n[currentLang].cam_anal} ${finalScanResult}`;
+      window.requestAnimationFrame(loop);
+    }
+
+    function createSherlockDeduction(location, clue, details, suspect, reason) {
+      if (currentLang === 'en') {
+        return `Upon analyzing the client's statement ("${details}") alongside the critical physical evidence '${clue}', the pattern becomes remarkably clear. Observing the behavioral frequency around ${location}, the timeline directly points toward [${suspect}]. Furthermore, the stated reason for suspicion ("${reason}") aligns logically with my observations. When you eliminate the impossible, whatever remains, however improbable, must be the truth.`;
+      } else if (currentLang === 'es') {
+        return `Al analizar la declaración del cliente ("${details}") junto con la evidencia física crucial '${clue}', el patrón se vuelve extraordinariamente claro. Observando la frecuencia de comportamiento alrededor de ${location}, la cronología apunta directamente a [${suspect}]. Además, el motivo de sospecha expresado ("${reason}") coincide lógicamente con mis observaciones. Una vez descartado lo imposible, lo que queda, por improbable que parezca, debe ser la verdad.`;
+      } else {
+        return `의뢰인이 제시한 사건 정황("${details}")과 현장에서 입수된 핵심 단서인 '${clue}'을 면밀히 대조해 보았네. 수사 대상지인 ${location}의 시간대별 통행 동선과 관찰 결과를 종합하면, 이 모든 정황은 지목된 [${suspect}]의 행적 패턴과 정확히 일치하네. 특히 의뢰인이 증언한 의심 사유("${reason}")는 연쇄적인 정황 증거와 결합하여 유력한 필연성을 제시하네. 불가능을 모두 제외하고 남은 유일한 가능성은 그것이 아무리 뜻밖일지라도 진실이라네.`;
+      }
+    }
+
+    async function fetchReportsFromServer() {
+      try {
+        const res = await fetch(JSONBIN_URL + "/latest", {
+          method: "GET",
+          headers: { "X-Master-Key": JSONBIN_API_KEY }
+        });
+        const data = await res.json();
+        return data.record.reports || [];
+      } catch (err) {
+        console.error("Server fetch error:", err);
+        return [];
+      }
+    }
+
+    async function saveReportToServer(newReport) {
+      try {
+        const currentReports = await fetchReportsFromServer();
+        currentReports.push(newReport);
+
+        await fetch(JSONBIN_URL, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Master-Key": JSONBIN_API_KEY
+          },
+          body: JSON.stringify({ reports: currentReports })
+        });
+      } catch (err) {
+        console.error("Server save error:", err);
+      }
+    }
+
+    async function generateReport() {
+      if (webcam) webcam.stop();
+      document.getElementById("page-5").classList.remove("active");
+      document.getElementById("page-6").classList.add("active");
+
+      const bElem = document.querySelector('input[name="building"]:checked');
+      const bText = bElem.nextElementSibling.innerText;
+      const fText = document.querySelector('input[name="floor"]:checked').value;
+      const gText = document.querySelector('input[name="gender"]:checked').nextElementSibling.innerText;
+      const locationStr = `${bText} ${fText} ${gText}`;
+
+      const clueSel = document.getElementById("clue-select");
+      let clueStr = "";
+      if (clueSel.value === "custom") {
+        clueStr = document.getElementById("custom-clue").value;
+      } else {
+        clueStr = clueSel.options[clueSel.selectedIndex].text;
+      }
+
+      const detailsStr = document.getElementById("case-details").value;
+      const suspectSel = document.getElementById("suspect");
+      const suspectStr = suspectSel.options[suspectSel.selectedIndex].text;
+      const reasonStr = document.getElementById("suspect-reason").value;
+
+      const SherlockAnalysis = createSherlockDeduction(locationStr, clueStr, detailsStr, suspectStr, reasonStr);
+
+      document.getElementById("rep-client").innerText = `${document.getElementById("student-id").value} ${document.getElementById("student-name").value}`;
+      document.getElementById("rep-location").innerText = locationStr;
+      document.getElementById("rep-clue").innerText = clueStr;
+      document.getElementById("rep-deduction-text").innerText = SherlockAnalysis;
+      document.getElementById("rep-verdict").innerText = finalScanResult;
+      document.getElementById("rep-sig-img").src = sigCanvas.toDataURL();
+
+      const newReport = {
+        client: `${document.getElementById("student-id").value} ${document.getElementById("student-name").value}`,
+        location: locationStr,
+        culprit: suspectStr,
+        analysis: SherlockAnalysis,
+        verdict: finalScanResult,
+        timestamp: new Date().toLocaleString("ko-KR")
+      };
+
+      await saveReportToServer(newReport);
+    }
+
+    function openNdaModal() { document.getElementById("nda-modal").style.display = "flex"; setTimeout(initCanvases, 100); }
+    function closeNdaModal() { document.getElementById("nda-modal").style.display = "none"; }
+    function closeArchiveModal() { document.getElementById("archive-modal").style.display = "none"; }
+
+    function verifyNdaAndShowArchive() {
+      const chk = document.getElementById("nda-check").checked;
+      if (!chk || !hasNdaSig) {
+        document.getElementById("nda-err").style.display = "block"; return;
+      }
+      closeNdaModal();
+      showArchives();
+    }
+
+    async function showArchives() {
+      const list = document.getElementById("archive-list");
+      const dict = i18n[currentLang];
+      list.innerHTML = `<p style="text-align:center; font-size:0.88rem;">${dict.arch_loading}</p>`;
+      document.getElementById("archive-modal").style.display = "flex";
+
+      const archives = await fetchReportsFromServer();
+      list.innerHTML = "";
+
+      if (archives.length === 0) {
+        list.innerHTML = `<p style="text-align:center; font-size:0.88rem; color:#555;">${dict.arch_empty}</p>`;
+      } else {
+        archives.slice().reverse().forEach((item, idx) => {
+          const originalIdx = archives.length - idx;
+          list.innerHTML += `
+            <div style="background:rgba(255,255,255,0.45); border:1px solid #000; padding:12px; font-size:0.82rem; line-height:1.4;">
+              <div style="display:flex; justify-content:space-between; font-weight:bold; color:var(--wax-red); font-family:'Cinzel';">
+                <span>CASE DOSSIER #${originalIdx} - ${item.client}</span>
+                <span style="font-size:0.7rem; color:#666;">${item.timestamp || ''}</span>
+              </div>
+              <div style="margin-top:4px;"><b>${dict.arch_lbl_loc}:</b> ${item.location} | <b>${dict.arch_lbl_suspect}:</b> ${item.culprit}</div>
+              <div style="margin-top:4px; color:#2c2018;"><b>${dict.arch_lbl_deduction}:</b> ${item.analysis}</div>
+              <div style="margin-top:4px;"><b>${dict.arch_lbl_verdict}:</b> ${item.verdict}</div>
+            </div>`;
+        });
       }
     }
   </script>

@@ -389,30 +389,14 @@
         <input type="text" id="student-name" data-i18n-ph="p1_name_ph" placeholder="성명을 입력하십시오">
       </div>
       <p class="error-text" id="err-1" data-i18n="err_1">모든 신원 정보를 빠짐없이 작성해야 합니다.</p>
-      <button class="btn-nav" onclick="nextPage(1)" data-i18n="btn_next_1">다음: 현장 스캔 및 휴지 확인 ▸</button>
+      <button class="btn-nav" onclick="nextPage(1)" data-i18n="btn_next_1">다음: 수사 장소 및 단서 선택 ▸</button>
     </div>
 
-    <!-- PAGE 2: 사전 현장 스캔 (휴지 여부 확인) -->
+    <!-- PAGE 2: 수사 장소 및 단서 선택 -->
     <div class="page" id="page-2">
       <div class="page-title">
-        <span data-i18n="p2_scan_title">II. 현장 휴지 잔여량 스캔</span>
+        <span data-i18n="p3_title">II. 수사 장소 및 목격 단서</span>
         <span>02/06</span>
-      </div>
-      <p style="font-size:0.85rem; color:#444;" data-i18n="p2_scan_desc">화장실의 휴지 거치대를 카메라로 스캔하여 휴지가 실제 부재한지 확인합니다.</p>
-      <div class="webcam-box" id="pre-webcam-box">
-        <span style="color:#aaa; font-size:0.85rem;" data-i18n="cam_init">렌즈 초기화 중...</span>
-      </div>
-      <div style="text-align:center; font-size:0.9rem; color:var(--wax-red); font-weight:bold;" id="pre-scan-status" data-i18n="cam_anal">
-        카메라 분석 중...
-      </div>
-      <button class="btn-nav" onclick="checkTissuePresence()" data-i18n="btn_check_tissue">스캔 결과 판정하기 ▸</button>
-    </div>
-
-    <!-- PAGE 3: 수사 장소 및 단서 선택 -->
-    <div class="page" id="page-3">
-      <div class="page-title">
-        <span data-i18n="p3_title">III. 수사 장소 및 목격 단서</span>
-        <span>03/06</span>
       </div>
       
       <div class="form-group">
@@ -457,8 +441,24 @@
         <input type="text" id="custom-clue" data-i18n-ph="custom_clue_ph" placeholder="목격한 단서를 직접 적으시오">
       </div>
 
-      <p class="error-text" id="err-3" data-i18n="err_3">장소 항목들과 단서를 빠짐없이 선택해야 합니다.</p>
-      <button class="btn-nav" onclick="nextPage(3)" data-i18n="btn_next_3">다음: 사건 경위 & 용의자 ▸</button>
+      <p class="error-text" id="err-2" data-i18n="err_3">장소 항목들과 단서를 빠짐없이 선택해야 합니다.</p>
+      <button class="btn-nav" onclick="nextPage(2)" data-i18n="btn_next_2">다음: 현장 스캔 및 휴지 확인 ▸</button>
+    </div>
+
+    <!-- PAGE 3: 현장 스캔 (휴지 여부 확인) -->
+    <div class="page" id="page-3">
+      <div class="page-title">
+        <span data-i18n="p2_scan_title">III. 현장 휴지 잔여량 스캔</span>
+        <span>03/06</span>
+      </div>
+      <p style="font-size:0.85rem; color:#444;" data-i18n="p2_scan_desc">화장실의 휴지 거치대를 카메라로 스캔하여 휴지가 실제 부재한지 확인합니다.</p>
+      <div class="webcam-box" id="pre-webcam-box">
+        <span style="color:#aaa; font-size:0.85rem;" data-i18n="cam_init">렌즈 초기화 중...</span>
+      </div>
+      <div style="text-align:center; font-size:0.9rem; color:var(--wax-red); font-weight:bold;" id="pre-scan-status" data-i18n="cam_anal">
+        카메라 분석 중...
+      </div>
+      <button class="btn-nav" onclick="checkTissuePresence()" data-i18n="btn_check_tissue">스캔 결과 판정하기 ▸</button>
     </div>
 
     <!-- PAGE 4: 사건 경위 및 용의자 -->
@@ -599,13 +599,9 @@
         p1_name_label: "의뢰인 성명 (필수)",
         p1_name_ph: "성명을 입력하십시오",
         err_1: "모든 신원 정보를 빠짐없이 작성해야 합니다.",
-        btn_next_1: "다음: 현장 스캔 및 휴지 확인 ▸",
+        btn_next_1: "다음: 수사 장소 및 단서 선택 ▸",
 
-        p2_scan_title: "II. 현장 휴지 잔여량 스캔",
-        p2_scan_desc: "화장실의 휴지 거치대를 카메라로 스캔하여 휴지가 실제 부재한지 확인합니다.",
-        btn_check_tissue: "스캔 결과 판정하기 ▸",
-
-        p3_title: "III. 수사 장소 및 목격 단서",
+        p3_title: "II. 수사 장소 및 목격 단서",
         p3_b_label: "1. 건물 선택 (필수)",
         b_main: "본관", b_west: "서관", b_east: "동관",
         p3_f_label: "2. 층수 선택 (필수)",
@@ -618,8 +614,11 @@
         clue_opt_3: "휴지가 거치대에서 무단 이탈함",
         clue_opt_custom: "기타 (직접 주관식 입력)",
         custom_clue_ph: "목격한 단서를 직접 적으시오",
-        err_3: "장소 항목들과 단서를 빠짐없이 선택해야 합니다.",
-        btn_next_3: "다음: 사건 경위 & 용의자 ▸",
+        btn_next_2: "다음: 현장 스캔 및 휴지 확인 ▸",
+
+        p2_scan_title: "III. 현장 휴지 잔여량 스캔",
+        p2_scan_desc: "화장실의 휴지 거치대를 카메라로 스캔하여 휴지가 실제 부재한지 확인합니다.",
+        btn_check_tissue: "스캔 결과 판정하기 ▸",
 
         p4_title: "IV. 사건 경위 및 용의자",
         p4_detail_label: "사건 상세 경위 진술 (필수)",
@@ -677,13 +676,9 @@
         p1_name_label: "Client Full Name (Required)",
         p1_name_ph: "Enter your name",
         err_1: "Please fill out all identification fields.",
-        btn_next_1: "Next: Scan Tissue Presence ▸",
+        btn_next_1: "Next: Select Location & Clues ▸",
 
-        p2_scan_title: "II. TISSUE SCANNING",
-        p2_scan_desc: "Scan the restroom tissue dispenser to verify if tissue is actually missing.",
-        btn_check_tissue: "Check Scan Result ▸",
-
-        p3_title: "III. LOCATION & CLUES",
+        p3_title: "II. LOCATION & CLUES",
         p3_b_label: "1. Select Building (Required)",
         b_main: "Main Bldg", b_west: "West Bldg", b_east: "East Bldg",
         p3_f_label: "2. Select Floor (Required)",
@@ -696,8 +691,11 @@
         clue_opt_3: "Tissue roll misplaced from holder",
         clue_opt_custom: "Other (Specify manually)",
         custom_clue_ph: "Describe the observed clue",
-        err_3: "Please select all location details and a clue.",
-        btn_next_3: "Next: Case Details & Suspect ▸",
+        btn_next_2: "Next: Scan Tissue Presence ▸",
+
+        p2_scan_title: "III. TISSUE SCANNING",
+        p2_scan_desc: "Scan the restroom tissue dispenser to verify if tissue is actually missing.",
+        btn_check_tissue: "Check Scan Result ▸",
 
         p4_title: "IV. DETAILS & SUSPECT",
         p4_detail_label: "Case Details Statement (Required)",
@@ -755,13 +753,9 @@
         p1_name_label: "Nombre Completo (Obligatorio)",
         p1_name_ph: "Ingrese su nombre",
         err_1: "Por favor complete todos los campos de identificación.",
-        btn_next_1: "Siguiente: Escanear Papel ▸",
+        btn_next_1: "Siguiente: Seleccionar Lugar y Pistas ▸",
 
-        p2_scan_title: "II. ESCANEO DE PAPEL",
-        p2_scan_desc: "Escanee el dispensador de papel del baño para verificar si realmente falta papel.",
-        btn_check_tissue: "Comprobar Resultado ▸",
-
-        p3_title: "III. LUGAR Y PISTAS",
+        p3_title: "II. LUGAR Y PISTAS",
         p3_b_label: "1. Seleccione Edificio (Obligatorio)",
         b_main: "Edificio Principal", b_west: "Edificio Oeste", b_east: "Edificio Este",
         p3_f_label: "2. Seleccione Piso (Obligatorio)",
@@ -774,8 +768,11 @@
         clue_opt_3: "El papel fue retirado del soporte",
         clue_opt_custom: "Otro (Especificar manualmente)",
         custom_clue_ph: "Describa la pista observada",
-        err_3: "Seleccione todos los detalles del lugar y una pista.",
-        btn_next_3: "Siguiente: Detalle y Sospechoso ▸",
+        btn_next_2: "Siguiente: Escanear Papel ▸",
+
+        p2_scan_title: "III. ESCANEO DE PAPEL",
+        p2_scan_desc: "Escanee el dispensador de papel del baño para verificar si realmente falta papel.",
+        btn_check_tissue: "Comprobar Resultado ▸",
 
         p4_title: "IV. DETALLES Y SOSPECHOSO",
         p4_detail_label: "Declaración del Caso (Obligatorio)",
@@ -901,17 +898,16 @@
       }
 
       const btnTextElem = document.getElementById("bgm-btn-text");
-      const dict = i18n[currentLang];
 
       if (isBgmPlaying) {
         ytPlayer.pauseVideo();
         isBgmPlaying = false;
-        btnTextElem.innerText = dict.bgm_off;
+        btnTextElem.innerText = i18n[currentLang].bgm_off;
       } else {
         ytPlayer.unMute();
         ytPlayer.playVideo();
         isBgmPlaying = true;
-        btnTextElem.innerText = dict.bgm_on;
+        btnTextElem.innerText = i18n[currentLang].bgm_on;
       }
     }
   </script>
@@ -928,8 +924,6 @@
     let preScanTopClass = "";
     let preScanTopProb = 0;
     let finalScanResult = "Analyzing...";
-    let isPreScanning = false;
-    let lastPredictTime = 0;
 
     const sigCanvas = document.getElementById("sig-canvas");
     const ctx = sigCanvas.getContext("2d");
@@ -1023,13 +1017,13 @@
         if (!document.getElementById("student-id").value.trim() || !document.getElementById("student-name").value.trim()) {
           document.getElementById("err-1").style.display = "block"; return;
         }
-        startPreScan();
-      } else if (curr === 3) {
+      } else if (curr === 2) {
         const b = document.querySelector('input[name="building"]:checked');
         const f = document.querySelector('input[name="floor"]:checked');
         const g = document.querySelector('input[name="gender"]:checked');
         const c = document.getElementById("clue-select").value;
-        if (!b || !f || !g || !c) { document.getElementById("err-3").style.display = "block"; return; }
+        if (!b || !f || !g || !c) { document.getElementById("err-2").style.display = "block"; return; }
+        startPreScan();
       } else if (curr === 4) {
         if (!document.getElementById("case-details").value.trim() || !document.getElementById("suspect").value || !document.getElementById("suspect-reason").value.trim()) {
           document.getElementById("err-4").style.display = "block"; return;
@@ -1041,7 +1035,7 @@
       if (curr + 1 === 5) setTimeout(initCanvases, 100);
     }
 
-    /* 사전 휴지 여부 스캔 카메라 연결 (성능 최적화 적용) */
+    /* 카메라 스캔 처리 */
     async function startPreScan() {
       try {
         if (!model) {
@@ -1050,71 +1044,58 @@
         }
 
         const flip = true;
-        // 해상도를 160x160으로 경량화하여 프레임 랙 방지
-        webcam = new tmImage.Webcam(160, 160, flip);
+        webcam = new tmImage.Webcam(200, 200, flip);
         await webcam.setup({ facingMode: "user" }); 
         await webcam.play();
 
         const box = document.getElementById("pre-webcam-box");
         box.innerHTML = ""; box.appendChild(webcam.canvas);
-        
-        isPreScanning = true;
         window.requestAnimationFrame(preScanLoop);
       } catch (e) {
         console.error(e);
-        document.getElementById("pre-webcam-box").innerHTML = "<span style='color:#e74c3c; font-size:0.75rem; text-align:center; padding:10px;'>카메라 권한 거부됨<br>(HTTPS 주소 확인 필요)</span>";
+        document.getElementById("pre-webcam-box").innerHTML = "<span style='color:#e74c3c; font-size:0.75rem; text-align:center; padding:10px;'>카메라 연결 오류<br>(권한을 확인해주세요)</span>";
         preScanTopClass = "No Tissue";
         preScanTopProb = 1.0;
-        document.getElementById("pre-scan-status").innerText = "카메라 연결 차단 - 기본 수사 모드 진행";
+        document.getElementById("pre-scan-status").innerText = "카메라 감지 불가 - 수사 계속 진행";
       }
     }
 
-    async function preScanLoop(timestamp) {
-      if (!isPreScanning || !webcam || !webcam.canvas) return;
-
+    async function preScanLoop() {
+      if (!webcam || !webcam.canvas) return;
       webcam.update();
-
-      // CPU/GPU 과부하 방지를 위해 150ms 간격으로만 AI 연산 수행
-      if (timestamp - lastPredictTime > 150) {
-        lastPredictTime = timestamp;
-
-        const prediction = await model.predict(webcam.canvas);
-        let topProb = -1, topClass = "";
-        for (let i = 0; i < maxPredictions; i++) {
-          if (prediction[i].probability > topProb) {
-            topProb = prediction[i].probability;
-            topClass = prediction[i].className;
-          }
+      const prediction = await model.predict(webcam.canvas);
+      let topProb = -1, topClass = "";
+      for (let i = 0; i < maxPredictions; i++) {
+        if (prediction[i].probability > topProb) {
+          topProb = prediction[i].probability; topClass = prediction[i].className;
         }
-        preScanTopClass = topClass;
-        preScanTopProb = topProb;
-        finalScanResult = `${topClass} (${(topProb * 100).toFixed(0)}%)`;
-        document.getElementById("pre-scan-status").innerText = `${i18n[currentLang].cam_anal} ${finalScanResult}`;
       }
-
+      preScanTopClass = topClass;
+      preScanTopProb = topProb;
+      finalScanResult = `${topClass} (${(topProb * 100).toFixed(0)}%)`;
+      document.getElementById("pre-scan-status").innerText = `${i18n[currentLang].cam_anal} ${finalScanResult}`;
       window.requestAnimationFrame(preScanLoop);
     }
 
-    /* 스캔 결과에 따른 분기 처리 */
+    /* 스캔 판정 버튼 클릭 시 텍스트 분기 */
     function checkTissuePresence() {
-      isPreScanning = false;
       if (webcam && typeof webcam.stop === 'function') webcam.stop();
 
       const isTissuePresent = preScanTopClass.toLowerCase().includes("tissue") && !preScanTopClass.toLowerCase().includes("no");
 
       if (isTissuePresent) {
-        // 휴지가 충분히 있는 경우 -> 사건 조기 종료
+        alert("스캔 결과: 휴지가 충분히 존재합니다!\n수사가 필요하지 않아 사건을 종결합니다.");
         showCaseDismissedReport();
       } else {
-        // 휴지가 없는 경우 -> 계속해서 정식 수사 서류 작성 진행
-        document.getElementById("page-2").classList.remove("active");
-        document.getElementById("page-3").classList.add("active");
+        alert("스캔 결과: 휴지 부재 확인!\n긴급 수사를 위하여 사건 상세 경위 페이지로 이동합니다.");
+        document.getElementById("page-3").classList.remove("active");
+        document.getElementById("page-4").classList.add("active");
       }
     }
 
-    /* 조기 사건 종료 보고서 출력 */
+    /* 휴지가 있을 때 - 종결 보고서 출력 */
     function showCaseDismissedReport() {
-      document.getElementById("page-2").classList.remove("active");
+      document.getElementById("page-3").classList.remove("active");
       document.getElementById("page-6").classList.add("active");
 
       document.getElementById("report-title-text").innerText = "CASE DISMISSED / 사건 종결";
@@ -1124,14 +1105,14 @@
       document.getElementById("deduction-header-text").innerText = "SHERLOCK HOLMES DEDUCTION";
       
       if (currentLang === 'en') {
-        document.getElementById("rep-deduction-text").innerText = "The camera lens confirms that tissue is already sufficiently present. There is no case to investigate. The request is officially closed.";
+        document.getElementById("rep-deduction-text").innerText = "The camera scan confirms that tissue is already sufficiently present in the dispenser. There is no missing tissue to investigate. Case closed.";
       } else if (currentLang === 'es') {
-        document.getElementById("rep-deduction-text").innerText = "El lente de la cámara confirma que ya hay suficiente papel higiénico. No hay ningún caso que investigar. La solicitud queda oficialmente cerrada.";
+        document.getElementById("rep-deduction-text").innerText = "El escaneo confirma que hay suficiente papel en el dispensador. No hay caso que investigar. Caso cerrado.";
       } else {
-        document.getElementById("rep-deduction-text").innerText = "렌즈 스캔 결과, 화장실 내에 휴지가 충분히 존재하는 것으로 확인되었습니다. 사건 수사를 진행할 사유가 성립하지 않으므로 본 사건을 조기 종결 처리합니다.";
+        document.getElementById("rep-deduction-text").innerText = "카메라 렌즈 스캔 결과, 거치대에 휴지가 충분히 존재하는 것으로 확인되었습니다. 휴지 고갈 사건으로 수사할 사유가 성립하지 않으므로 본 사건은 즉시 종결 처리합니다.";
       }
 
-      document.getElementById("rep-verdict").innerText = `${finalScanResult} [휴지 존재 확인]`;
+      document.getElementById("rep-verdict").innerText = `${finalScanResult} [휴지 있음 - 사건 종결]`;
     }
 
     function createSherlockDeduction(location, clue, details, suspect, reason) {
@@ -1213,7 +1194,7 @@
       document.getElementById("rep-location").innerText = locationStr;
       document.getElementById("rep-clue").innerText = clueStr;
       document.getElementById("rep-deduction-text").innerText = SherlockAnalysis;
-      document.getElementById("rep-verdict").innerText = finalScanResult;
+      document.getElementById("rep-verdict").innerText = `${finalScanResult} [휴지 없음 - 수사 진행]`;
       document.getElementById("rep-sig-img").src = sigCanvas.toDataURL();
 
       const newReport = {
@@ -1221,7 +1202,7 @@
         location: locationStr,
         culprit: suspectStr,
         analysis: SherlockAnalysis,
-        verdict: finalScanResult,
+        verdict: `${finalScanResult} [휴지 없음 - 수사 진행]`,
         timestamp: new Date().toLocaleString("ko-KR")
       };
 

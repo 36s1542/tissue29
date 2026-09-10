@@ -928,6 +928,8 @@
     let preScanTopClass = "";
     let preScanTopProb = 0;
     let finalScanResult = "Analyzing...";
+    let isPreScanning = false;
+    let lastPredictTime = 0;
 
     const sigCanvas = document.getElementById("sig-canvas");
     const ctx = sigCanvas.getContext("2d");
@@ -1039,7 +1041,7 @@
       if (curr + 1 === 5) setTimeout(initCanvases, 100);
     }
 
-    /* 사전 휴지 여부 스캔 카메라 연결 */
+    /* 사전 휴지 여부 스캔 카메라 연결 (성능 최적화 적용) */
     async function startPreScan() {
       try {
         if (!model) {
@@ -1048,12 +1050,15 @@
         }
 
         const flip = true;
-        webcam = new tmImage.Webcam(200, 200, flip);
+        // 해상도를 160x160으로 경량화하여 프레임 랙 방지
+        webcam = new tmImage.Webcam(160, 160, flip);
         await webcam.setup({ facingMode: "user" }); 
         await webcam.play();
 
         const box = document.getElementById("pre-webcam-box");
         box.innerHTML = ""; box.appendChild(webcam.canvas);
+        
+        isPreScanning = true;
         window.requestAnimationFrame(preScanLoop);
       } catch (e) {
         console.error(e);
@@ -1064,25 +1069,35 @@
       }
     }
 
-    async function preScanLoop() {
-      if (!webcam || !webcam.canvas) return;
+    async function preScanLoop(timestamp) {
+      if (!isPreScanning || !webcam || !webcam.canvas) return;
+
       webcam.update();
-      const prediction = await model.predict(webcam.canvas);
-      let topProb = -1, topClass = "";
-      for (let i = 0; i < maxPredictions; i++) {
-        if (prediction[i].probability > topProb) {
-          topProb = prediction[i].probability; topClass = prediction[i].className;
+
+      // CPU/GPU 과부하 방지를 위해 150ms 간격으로만 AI 연산 수행
+      if (timestamp - lastPredictTime > 150) {
+        lastPredictTime = timestamp;
+
+        const prediction = await model.predict(webcam.canvas);
+        let topProb = -1, topClass = "";
+        for (let i = 0; i < maxPredictions; i++) {
+          if (prediction[i].probability > topProb) {
+            topProb = prediction[i].probability;
+            topClass = prediction[i].className;
+          }
         }
+        preScanTopClass = topClass;
+        preScanTopProb = topProb;
+        finalScanResult = `${topClass} (${(topProb * 100).toFixed(0)}%)`;
+        document.getElementById("pre-scan-status").innerText = `${i18n[currentLang].cam_anal} ${finalScanResult}`;
       }
-      preScanTopClass = topClass;
-      preScanTopProb = topProb;
-      finalScanResult = `${topClass} (${(topProb * 100).toFixed(0)}%)`;
-      document.getElementById("pre-scan-status").innerText = `${i18n[currentLang].cam_anal} ${finalScanResult}`;
+
       window.requestAnimationFrame(preScanLoop);
     }
 
     /* 스캔 결과에 따른 분기 처리 */
     function checkTissuePresence() {
+      isPreScanning = false;
       if (webcam && typeof webcam.stop === 'function') webcam.stop();
 
       const isTissuePresent = preScanTopClass.toLowerCase().includes("tissue") && !preScanTopClass.toLowerCase().includes("no");

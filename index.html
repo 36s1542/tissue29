@@ -153,7 +153,7 @@
       background: rgba(255, 255, 255, 0.6);
       border: 1px dashed var(--ink);
       cursor: crosshair;
-      touch-action: none; /* 터치 드래그 시 화면 스크롤 방지 */
+      touch-action: none;
     }
 
     .wax-seal-container {
@@ -489,7 +489,7 @@
         </div>
       </div>
 
-      <button class="btn-nav" style="background:#8b0000; color:#fff;" onclick="openNdaModal()">🔒 타인 비밀 보고서 보관함 열람</button>
+      <button class="btn-nav" style="background:#8b0000; color:#fff;" onclick="openNdaModal()">🔒 수사 보고서 누적 보관함 열람</button>
       <button class="btn-nav" style="background:#281d17;" onclick="location.reload()">새 사건 의뢰하기</button>
     </div>
   </div>
@@ -499,7 +499,7 @@
     <div class="modal-content">
       <h2 style="font-family:'Cinzel'; text-align:center; border-bottom:2px solid var(--ink); padding-bottom:8px;">221B NON-DISCLOSURE AGREEMENT</h2>
       <p style="font-size:0.85rem; line-height:1.5;">
-        본 서약서는 221B Baker Street 탐정 사무소의 보안 문서입니다. 타 의뢰인의 수사 기록 및 본 사무소의 정교한 추리 기법에 관한 정보는 제3자에게 누설할 수 없습니다.
+        본 서약서는 221B Baker Street 탐정 사무소의 보안 문서입니다. 누적 기록된 의뢰인들의 수사 기록 및 본 사무소의 추리 기법에 관한 정보는 제3자에게 누설할 수 없습니다.
       </p>
       
       <div class="form-group" style="margin-top:4px;">
@@ -534,7 +534,7 @@
     let model, webcam, maxPredictions;
     let finalScanResult = "판정 중...";
 
-    // Canvas 관리 (터치 및 마우스 완벽 지원)
+    // Canvas 관리 (터치 및 마우스 지원)
     const sigCanvas = document.getElementById("sig-canvas");
     const ctx = sigCanvas.getContext("2d");
     let isSigning = false, hasSig = false;
@@ -594,12 +594,10 @@
         setIsSigning(false);
       };
 
-      // 마우스 이벤트
       canvas.addEventListener("mousedown", startDraw);
       canvas.addEventListener("mousemove", moveDraw);
       window.addEventListener("mouseup", endDraw);
 
-      // 터치 이벤트 (스마트폰/패드 지원)
       canvas.addEventListener("touchstart", startDraw, { passive: false });
       canvas.addEventListener("touchmove", moveDraw, { passive: false });
       canvas.addEventListener("touchend", endDraw);
@@ -677,6 +675,33 @@
       window.requestAnimationFrame(loop);
     }
 
+    // 완전히 다양하고 진지한 셜록 홈즈 생성기 알고리즘
+    function createSherlockDeduction(location, clue, details, suspect, reason) {
+      const intros = [
+        `의뢰인이 제시한 사건 정황("${details}")과 현장에서 입수된 핵심 단서인 '${clue}'을 면밀히 대조해 보았네.`,
+        `사건의 본질은 늘 사소해 보이는 단서에 숨어있지. 현장 진술인 "${details}"과 발견된 '${clue}'의 정황을 정밀히 관찰한 결과라네.`,
+        `해당 구역의 사건 경위("${details}") 및 발견 지점의 '${clue}' 상태를 조합했을 때 결코 우연의 산물이 아님이 명백하네.`
+      ];
+
+      const analyses = [
+        `수사 대상지인 ${location}의 시간대별 통행 동선과 세밀한 관찰 결과를 종합하면, 이 모든 정황은 지목된 [${suspect}]의 미세한 행적 패턴과 일치하고 있네.`,
+        `${location} 현장의 환경적 특성 및 물적 증거의 잔여 형태는 분명 특정 의도를 가진 인물의 소행임을 가리키며, [${suspect}]이(가) 사건 중심에 서 있음을 증명하네.`,
+        `범행이 일어난 ${location}의 구조적 환경을 재구성해보면, 의뢰인이 제기한 [${suspect}]의 행동 패턴과 기막히게 맞아떨어지고 있네.`
+      ];
+
+      const conclusions = [
+        `특히 의뢰인이 증언한 의심 사유("${reason}")는 연쇄적인 정황 증거와 결합하여 유력한 논리적 필연성을 제시하고 있네. 불가능을 모두 제외하고 남은 유일한 가능성은 그것이 아무리 뜻밖일지라도 진실이라네.`,
+        `더불어 제기된 용의선상 사유("${reason}")는 단순한 추측을 넘어 관찰에 근거한 명확한 심증을 뒷받침하네. 진실은 언제나 명료하며, 범인은 이 논리적 포위망을 빠져나갈 수 없을 것이네.`,
+        `또한 지목 사유("${reason}")에 나타난 용의자의 행태는 본 사건의 결정적 동기로 작동했음이 분명하네. 나의 오랜 수사 경험으로 미루어볼 때 사건의 전말은 이미 완벽히 입증되었네.`
+      ];
+
+      const randI = intros[Math.floor(Math.random() * intros.length)];
+      const randA = analyses[Math.floor(Math.random() * analyses.length)];
+      const randC = conclusions[Math.floor(Math.random() * conclusions.length)];
+
+      return `${randI} ${randA} ${randC}`;
+    }
+
     function generateReport() {
       if (webcam) webcam.stop();
       document.getElementById("page-5").classList.remove("active");
@@ -693,25 +718,34 @@
       const suspectStr = document.getElementById("suspect").value;
       const reasonStr = document.getElementById("suspect-reason").value;
 
-      const SherlockAnalysis = `
-        의뢰인이 제출한 정황("${detailsStr}")과 현장에서 발견된 단서인 '${clueStr}'을 종합적으로 검토해 볼 때, 본 사건은 단순한 물품 소진이 아닌 명확한 의도와 패턴을 가진 행동입니다. 수사 대상 지역인 ${locationStr}의 동선과 시간대별 사용량을 정밀 분석한 결과, 유력한 용의자로 지목된 [${suspectStr}]의 행적과 완벽하게 일치합니다. 의뢰인이 제기한 선정 사유("${reasonStr}")는 관찰에 기반한 매우 타당한 근거를 제공하며, 관찰된 정황 증거와 물리학적 정황상 해당 인물이 본 사건의 주요 원인임을 가리키고 있습니다. 불가능을 모두 제외하고 남은 유일한 가능성은 그것이 아무리 뜻밖일지라도 진실입니다.
-      `;
+      // 무작위로 매번 다르게 조합되는 진지한 추리문
+      const SherlockAnalysis = createSherlockDeduction(locationStr, clueStr, detailsStr, suspectStr, reasonStr);
 
       document.getElementById("rep-client").innerText = `${document.getElementById("student-id").value} ${document.getElementById("student-name").value}`;
       document.getElementById("rep-location").innerText = locationStr;
       document.getElementById("rep-clue").innerText = clueStr;
-      document.getElementById("rep-deduction-text").innerText = SherlockAnalysis.trim();
+      document.getElementById("rep-deduction-text").innerText = SherlockAnalysis;
       document.getElementById("rep-verdict").innerText = finalScanResult;
       document.getElementById("rep-sig-img").src = sigCanvas.toDataURL();
 
+      // localStorage 누적 저장 로직 강화
       const newReport = {
         client: `${document.getElementById("student-id").value} ${document.getElementById("student-name").value}`,
         location: locationStr,
         culprit: suspectStr,
-        analysis: SherlockAnalysis.trim(),
-        verdict: finalScanResult
+        analysis: SherlockAnalysis,
+        verdict: finalScanResult,
+        timestamp: new Date().toLocaleString("ko-KR")
       };
-      let archives = JSON.parse(localStorage.getItem("sherlock_reports") || "[]");
+
+      let archives = [];
+      try {
+        const stored = localStorage.getItem("sherlock_reports");
+        if (stored) archives = JSON.parse(stored);
+      } catch (e) {
+        archives = [];
+      }
+      
       archives.push(newReport);
       localStorage.setItem("sherlock_reports", JSON.stringify(archives));
     }
@@ -732,17 +766,29 @@
     function showArchives() {
       const list = document.getElementById("archive-list");
       list.innerHTML = "";
-      let archives = JSON.parse(localStorage.getItem("sherlock_reports") || "[]");
+      
+      let archives = [];
+      try {
+        const stored = localStorage.getItem("sherlock_reports");
+        if (stored) archives = JSON.parse(stored);
+      } catch (e) {
+        archives = [];
+      }
 
       if (archives.length === 0) {
-        list.innerHTML = `<p style="text-align:center; font-size:0.88rem; color:#555;">보관된 기밀 보고서가 존재하지 않습니다.</p>`;
+        list.innerHTML = `<p style="text-align:center; font-size:0.88rem; color:#555;">보관된 수사 보고서가 존재하지 않습니다.</p>`;
       } else {
-        archives.forEach((item, idx) => {
+        // 최근 저장된 보고서부터 역순으로 누적 출력
+        archives.slice().reverse().forEach((item, idx) => {
+          const originalIdx = archives.length - idx;
           list.innerHTML += `
             <div style="background:rgba(255,255,255,0.45); border:1px solid #000; padding:12px; font-size:0.82rem; line-height:1.4;">
-              <div style="font-weight:bold; color:var(--wax-red); font-family:'Cinzel';">CASE DOSSIER #${idx + 1} - ${item.client}</div>
+              <div style="display:flex; justify-content:space-between; font-weight:bold; color:var(--wax-red); font-family:'Cinzel';">
+                <span>CASE DOSSIER #${originalIdx} - ${item.client}</span>
+                <span style="font-size:0.7rem; color:#666;">${item.timestamp || ''}</span>
+              </div>
               <div style="margin-top:4px;"><b>수사 장소:</b> ${item.location} | <b>지목 용의자:</b> ${item.culprit}</div>
-              <div style="margin-top:4px; color:#2c2018;"><b>셜록 추리 요약:</b> ${item.analysis.substring(0, 85)}...</div>
+              <div style="margin-top:4px; color:#2c2018;"><b>셜록 추리:</b> ${item.analysis}</div>
               <div style="margin-top:4px;"><b>AI 판정:</b> ${item.verdict}</div>
             </div>`;
         });

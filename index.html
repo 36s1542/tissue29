@@ -40,6 +40,35 @@
       padding: 30px 20px;
     }
 
+    .top-controls {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      z-index: 9999;
+      display: flex;
+      gap: 10px;
+    }
+
+    .control-btn, .lang-select {
+      background: #281d17;
+      color: #b89742;
+      border: 1px solid #b89742;
+      padding: 8px 12px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 4px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .control-btn:hover, .lang-select:hover {
+      background: #8b0000;
+      color: #ffffff;
+    }
+
     .dossier-container {
       width: 100%;
       max-width: 600px;
@@ -308,30 +337,6 @@
       box-shadow: 0 0 30px #000;
     }
 
-    /* BGM 온오프 버튼 */
-    #bgm-toggle-btn {
-      position: fixed;
-      top: 15px;
-      right: 15px;
-      z-index: 9999;
-      background: #281d17;
-      color: #b89742;
-      border: 1px solid #b89742;
-      padding: 8px 14px;
-      font-family: 'Cinzel', serif;
-      font-size: 0.8rem;
-      font-weight: bold;
-      cursor: pointer;
-      border-radius: 4px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-      transition: all 0.2s ease;
-    }
-    #bgm-toggle-btn:hover {
-      background: #8b0000;
-      color: #ffffff;
-    }
-
-    /* 보이지 않는 유튜브 오디오 영역 */
     #youtube-bgm-container {
       position: absolute;
       width: 1px;
@@ -343,12 +348,18 @@
 </head>
 <body>
 
-  <!-- BGM ON/OFF 버튼 -->
-  <button id="bgm-toggle-btn" onclick="toggleBGM()">
-    <i class="fa-solid fa-music"></i> BGM START
-  </button>
+  <!-- 컨트롤 컨트롤러 (언어 선택 & BGM) -->
+  <div class="top-controls">
+    <select class="lang-select" id="lang-select" onchange="changeLanguage(this.value)">
+      <option value="ko">🇰🇷 한국어</option>
+      <option value="en">🇺🇸 English</option>
+      <option value="es">🇪🇸 Español</option>
+    </select>
+    <button class="control-btn" id="bgm-toggle-btn" onclick="toggleBGM()">
+      <i class="fa-solid fa-music"></i> BGM START
+    </button>
+  </div>
 
-  <!-- 안전한 유튜브 BGM 보이지 않는 오디오 컨테이너 -->
   <div id="youtube-bgm-container">
     <div id="yt-player"></div>
   </div>
@@ -359,168 +370,168 @@
       <h1>PROJECT TISSUE</h1>
     </header>
 
-    <!-- PAGE 1: 의뢰인 신원 -->
+    <!-- PAGE 1 -->
     <div class="page active" id="page-1">
       <div class="page-title">
-        <span>I. 의뢰인 신원 정보</span>
+        <span data-i18n="p1_title">I. 의뢰인 신원 정보</span>
         <span>01/05</span>
       </div>
       <div class="form-group">
-        <label>소속 기관</label>
+        <label data-i18n="p1_school_label">소속 기관</label>
         <input type="text" id="school" value="한영외국어고등학교" readonly>
       </div>
       <div class="form-group">
-        <label>의뢰인 학번 (필수)</label>
-        <input type="text" id="student-id" placeholder="학번을 입력하십시오">
+        <label data-i18n="p1_id_label">의뢰인 학번 (필수)</label>
+        <input type="text" id="student-id" data-i18n-ph="p1_id_ph" placeholder="학번을 입력하십시오">
       </div>
       <div class="form-group">
-        <label>의뢰인 성명 (필수)</label>
-        <input type="text" id="student-name" placeholder="성명을 입력하십시오">
+        <label data-i18n="p1_name_label">의뢰인 성명 (필수)</label>
+        <input type="text" id="student-name" data-i18n-ph="p1_name_ph" placeholder="성명을 입력하십시오">
       </div>
-      <p class="error-text" id="err-1">모든 신원 정보를 빠짐없이 작성해야 합니다.</p>
-      <button class="btn-nav" onclick="nextPage(1)">다음: 장소 및 단서 선택 ▸</button>
+      <p class="error-text" id="err-1" data-i18n="err_1">모든 신원 정보를 빠짐없이 작성해야 합니다.</p>
+      <button class="btn-nav" onclick="nextPage(1)" data-i18n="btn_next_1">다음: 장소 및 단서 선택 ▸</button>
     </div>
 
-    <!-- PAGE 2: 구체적 수사 장소 & 단서 -->
+    <!-- PAGE 2 -->
     <div class="page" id="page-2">
       <div class="page-title">
-        <span>II. 수사 장소 및 목격 단서</span>
+        <span data-i18n="p2_title">II. 수사 장소 및 목격 단서</span>
         <span>02/05</span>
       </div>
       
       <div class="form-group">
-        <label>1. 건물 선택 (필수)</label>
+        <label data-i18n="p2_b_label">1. 건물 선택 (필수)</label>
         <div class="checkbox-group">
-          <label><input type="radio" name="building" value="본관"> 본관</label>
-          <label><input type="radio" name="building" value="서관"> 서관</label>
-          <label><input type="radio" name="building" value="동관"> 동관</label>
+          <label><input type="radio" name="building" value="본관"> <span data-i18n="b_main">본관</span></label>
+          <label><input type="radio" name="building" value="서관"> <span data-i18n="b_west">서관</span></label>
+          <label><input type="radio" name="building" value="동관"> <span data-i18n="b_east">동관</span></label>
         </div>
       </div>
 
       <div class="form-group">
-        <label>2. 층수 선택 (필수)</label>
+        <label data-i18n="p2_f_label">2. 층수 선택 (필수)</label>
         <div class="checkbox-group">
-          <label><input type="radio" name="floor" value="1층"> 1층</label>
-          <label><input type="radio" name="floor" value="2층"> 2층</label>
-          <label><input type="radio" name="floor" value="3층"> 3층</label>
-          <label><input type="radio" name="floor" value="4층"> 4층</label>
-          <label><input type="radio" name="floor" value="5층"> 5층</label>
+          <label><input type="radio" name="floor" value="1층"> 1F</label>
+          <label><input type="radio" name="floor" value="2층"> 2F</label>
+          <label><input type="radio" name="floor" value="3층"> 3F</label>
+          <label><input type="radio" name="floor" value="4층"> 4F</label>
+          <label><input type="radio" name="floor" value="5층"> 5F</label>
         </div>
       </div>
 
       <div class="form-group">
-        <label>3. 구분 선택 (필수)</label>
+        <label data-i18n="p2_g_label">3. 구분 선택 (필수)</label>
         <div class="checkbox-group">
-          <label><input type="radio" name="gender" value="여자 화장실"> 여자 화장실</label>
-          <label><input type="radio" name="gender" value="남자 화장실"> 남자 화장실</label>
+          <label><input type="radio" name="gender" value="여자 화장실"> <span data-i18n="g_female">여자 화장실</span></label>
+          <label><input type="radio" name="gender" value="남자 화장실"> <span data-i18n="g_male">남자 화장실</span></label>
         </div>
       </div>
 
       <div class="form-group">
-        <label>4. 현장 목격 단서 (필수)</label>
+        <label data-i18n="p2_clue_label">4. 현장 목격 단서 (필수)</label>
         <select id="clue-select" onchange="toggleCustomClue()">
-          <option value="">-- 발견된 단서를 선택하십시오 --</option>
-          <option value="휴지심만 덩그러니 남음">휴지심만 덩그러니 남음</option>
-          <option value="잔여량이 조만간 소진될 것으로 보임">잔여량이 조만간 소진될 것으로 보임</option>
-          <option value="휴지가 거치대에서 무단 이탈함">휴지가 거치대에서 무단 이탈함</option>
-          <option value="custom">기타 (직접 주관식 입력)</option>
+          <option value="" data-i18n="clue_opt_default">-- 발견된 단서를 선택하십시오 --</option>
+          <option value="opt1" data-i18n="clue_opt_1">휴지심만 덩그러니 남음</option>
+          <option value="opt2" data-i18n="clue_opt_2">잔여량이 조만간 소진될 것으로 보임</option>
+          <option value="opt3" data-i18n="clue_opt_3">휴지가 거치대에서 무단 이탈함</option>
+          <option value="custom" data-i18n="clue_opt_custom">기타 (직접 주관식 입력)</option>
         </select>
       </div>
       <div class="form-group" id="custom-clue-group" style="display: none;">
-        <input type="text" id="custom-clue" placeholder="목격한 단서를 직접 적으시오">
+        <input type="text" id="custom-clue" data-i18n-ph="custom_clue_ph" placeholder="목격한 단서를 직접 적으시오">
       </div>
 
-      <p class="error-text" id="err-2">장소 항목들과 단서를 빠짐없이 선택해야 합니다.</p>
-      <button class="btn-nav" onclick="nextPage(2)">다음: 사건 경위 & 용의자 ▸</button>
+      <p class="error-text" id="err-2" data-i18n="err_2">장소 항목들과 단서를 빠짐없이 선택해야 합니다.</p>
+      <button class="btn-nav" onclick="nextPage(2)" data-i18n="btn_next_2">다음: 사건 경위 & 용의자 ▸</button>
     </div>
 
-    <!-- PAGE 3: 사건 경위 & 용의자 -->
+    <!-- PAGE 3 -->
     <div class="page" id="page-3">
       <div class="page-title">
-        <span>III. 사건 경위 및 용의자</span>
+        <span data-i18n="p3_title">III. 사건 경위 및 용의자</span>
         <span>03/05</span>
       </div>
       <div class="form-group">
-        <label>사건 상세 경위 진술 (필수)</label>
-        <textarea id="case-details" placeholder="어떤 정황으로 휴지 사건이 발생했는지 적으시오..."></textarea>
+        <label data-i18n="p3_detail_label">사건 상세 경위 진술 (필수)</label>
+        <textarea id="case-details" data-i18n-ph="p3_detail_ph" placeholder="어떤 정황으로 휴지 사건이 발생했는지 적으시오..."></textarea>
       </div>
       <div class="form-group">
-        <label>유력 의심 용의자 (필수)</label>
+        <label data-i18n="p3_suspect_label">유력 의심 용의자 (필수)</label>
         <select id="suspect">
-          <option value="">-- 의심 인물을 선택하십시오 --</option>
-          <option value="쉬는시간 대량 사용 학생">쉬는시간 대량 사용 학생</option>
-          <option value="청소 점검 미이행 관계자">청소 점검 미이행 관계자</option>
-          <option value="시험기간 고카페인 중독자">시험기간 고카페인 중독자</option>
-          <option value="익명의 휴지 절도범">익명의 휴지 절도범</option>
+          <option value="" data-i18n="suspect_default">-- 의심 인물을 선택하십시오 --</option>
+          <option value="s1" data-i18n="suspect_1">쉬는시간 대량 사용 학생</option>
+          <option value="s2" data-i18n="suspect_2">청소 점검 미이행 관계자</option>
+          <option value="s3" data-i18n="suspect_3">시험기간 고카페인 중독자</option>
+          <option value="s4" data-i18n="suspect_4">익명의 휴지 절도범</option>
         </select>
       </div>
       <div class="form-group">
-        <label>용의선상 선정 이유 (필수)</label>
-        <textarea id="suspect-reason" placeholder="해당 대상을 의심하는 이유를 적으시오..."></textarea>
+        <label data-i18n="p3_reason_label">용의선상 선정 이유 (필수)</label>
+        <textarea id="suspect-reason" data-i18n-ph="p3_reason_ph" placeholder="해당 대상을 의심하는 이유를 적으시오..."></textarea>
       </div>
-      <p class="error-text" id="err-3">모든 진술 및 용의자 정보를 입력해야 합니다.</p>
-      <button class="btn-nav" onclick="nextPage(3)">다음: 서명 및 실링왁스 ▸</button>
+      <p class="error-text" id="err-3" data-i18n="err_3">모든 진술 및 용의자 정보를 입력해야 합니다.</p>
+      <button class="btn-nav" onclick="nextPage(3)" data-i18n="btn_next_3">다음: 서명 및 실링왁스 ▸</button>
     </div>
 
-    <!-- PAGE 4: 서명 & 실링왁스 -->
+    <!-- PAGE 4 -->
     <div class="page" id="page-4">
       <div class="page-title">
-        <span>IV. 기밀 서약 & 실링</span>
+        <span data-i18n="p4_title">IV. 기밀 서약 & 실링</span>
         <span>04/05</span>
       </div>
       <div class="form-group">
-        <label>의뢰인 친필 서명 (손가락/마우스)</label>
+        <label data-i18n="p4_sig_label">의뢰인 친필 서명 (손가락/마우스)</label>
         <canvas id="sig-canvas" class="signature-pad"></canvas>
-        <button class="btn-clear" style="align-self:flex-end; background:none; border:none; text-decoration:underline; cursor:pointer;" onclick="clearSignature()">지우기</button>
+        <button class="btn-clear" style="align-self:flex-end; background:none; border:none; text-decoration:underline; cursor:pointer;" onclick="clearSignature()" data-i18n="btn_clear">지우기</button>
       </div>
       <div class="wax-seal-container">
-        <label>밀봉 실링왁스 인장 (클릭)</label>
+        <label data-i18n="p4_wax_label">밀봉 실링왁스 인장 (클릭)</label>
         <div class="wax-seal-btn" id="wax-btn" onclick="stampWax()">
           <i class="fa-solid fa-stamp"></i>
         </div>
-        <span id="wax-status" style="font-size:0.8rem;">인장이 찍히지 않았습니다</span>
+        <span id="wax-status" style="font-size:0.8rem;" data-i18n="wax_status_off">인장이 찍히지 않았습니다</span>
       </div>
-      <p class="error-text" id="err-4">서명과 실링왁스 인장이 모두 필요합니다.</p>
-      <button class="btn-nav" onclick="startInvestigation()">스캔 및 셜록 추론 개시 ▸</button>
+      <p class="error-text" id="err-4" data-i18n="err_4">서명과 실링왁스 인장이 모두 필요합니다.</p>
+      <button class="btn-nav" onclick="startInvestigation()" data-i18n="btn_next_4">스캔 및 셜록 추론 개시 ▸</button>
     </div>
 
-    <!-- PAGE 5: 스캔 및 AI 추리 -->
+    <!-- PAGE 5 -->
     <div class="page" id="page-5">
       <div class="page-title">
-        <span>V. 렌즈 스캔 & AI 추리</span>
+        <span data-i18n="p5_title">V. 렌즈 스캔 & AI 추리</span>
         <span>SCANNING</span>
       </div>
       <div class="webcam-box" id="webcam-box">
-        <span style="color:#aaa; font-size:0.85rem;">렌즈 초기화 중...</span>
+        <span style="color:#aaa; font-size:0.85rem;" data-i18n="cam_init">렌즈 초기화 중...</span>
       </div>
-      <div style="text-align:center; font-size:0.9rem; color:var(--wax-red); font-weight:bold;" id="scan-status">
+      <div style="text-align:center; font-size:0.9rem; color:var(--wax-red); font-weight:bold;" id="scan-status" data-i18n="cam_anal">
         카메라 분석 중...
       </div>
-      <button class="btn-nav" onclick="generateReport()">최종 탐정 보고서 발급 ▸</button>
+      <button class="btn-nav" onclick="generateReport()" data-i18n="btn_next_5">최종 탐정 보고서 발급 ▸</button>
     </div>
 
-    <!-- PAGE 6: 최종 탐정 보고서 -->
+    <!-- PAGE 6 -->
     <div class="page" id="page-6">
       <div class="report-paper">
         <div class="report-title">OFFICIAL INVESTIGATION REPORT</div>
         
         <div class="report-section">
-          <div class="report-row"><span class="label">의뢰인:</span><span class="val" id="rep-client">-</span></div>
-          <div class="report-row"><span class="label">수사 장소:</span><span class="val" id="rep-location">-</span></div>
-          <div class="report-row"><span class="label">현장 단서:</span><span class="val" id="rep-clue">-</span></div>
+          <div class="report-row"><span class="label" data-i18n="rep_lbl_client">의뢰인:</span><span class="val" id="rep-client">-</span></div>
+          <div class="report-row"><span class="label" data-i18n="rep_lbl_loc">수사 장소:</span><span class="val" id="rep-location">-</span></div>
+          <div class="report-row"><span class="label" data-i18n="rep_lbl_clue">현장 단서:</span><span class="val" id="rep-clue">-</span></div>
         </div>
 
         <div class="sherlock-deduction-box">
           <h4>SHERLOCK HOLMES DEDUCTION</h4>
-          <p id="rep-deduction-text">추리 분석 중...</p>
+          <p id="rep-deduction-text">Deducting...</p>
         </div>
 
-        <div class="report-row" style="padding-top: 4px;"><span class="label">렌즈 스캔 판정:</span><strong class="val" id="rep-verdict" style="color:var(--wax-red);">-</strong></div>
+        <div class="report-row" style="padding-top: 4px;"><span class="label" data-i18n="rep_lbl_verdict">렌즈 스캔 판정:</span><strong class="val" id="rep-verdict" style="color:var(--wax-red);">-</strong></div>
 
         <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:10px;">
           <div>
             <div style="font-size:0.7rem; color:#555; margin-bottom:2px;">CLIENT SIGNATURE</div>
-            <img id="rep-sig-img" style="max-width:110px; max-height:45px; border-bottom:1px solid #000;" alt="서명">
+            <img id="rep-sig-img" style="max-width:110px; max-height:45px; border-bottom:1px solid #000;" alt="Signature">
           </div>
           <div style="text-align:center;">
             <div style="font-size:0.7rem; color:#555; margin-bottom:2px;">221B SEAL</div>
@@ -531,52 +542,299 @@
         </div>
       </div>
 
-      <button class="btn-nav" style="background:#8b0000; color:#fff;" onclick="openNdaModal()">🔒 수사 보고서 누적 보관함 열람</button>
-      <button class="btn-nav" style="background:#281d17;" onclick="location.reload()">새 사건 의뢰하기</button>
+      <button class="btn-nav" style="background:#8b0000; color:#fff;" onclick="openNdaModal()" data-i18n="btn_open_archive">🔒 수사 보고서 누적 보관함 열람</button>
+      <button class="btn-nav" style="background:#281d17;" onclick="location.reload()" data-i18n="btn_restart">새 사건 의뢰하기</button>
     </div>
   </div>
 
-  <!-- 비밀유지서약 모달 -->
+  <!-- NDA Modal -->
   <div class="modal-overlay" id="nda-modal">
     <div class="modal-content">
       <h2 style="font-family:'Cinzel'; text-align:center; border-bottom:2px solid var(--ink); padding-bottom:8px;">221B NON-DISCLOSURE AGREEMENT</h2>
-      <p style="font-size:0.85rem; line-height:1.5;">
+      <p style="font-size:0.85rem; line-height:1.5;" data-i18n="nda_text">
         본 서약서는 221B Baker Street 탐정 사무소의 보안 문서입니다. 누적 기록된 의뢰인들의 수사 기록 및 본 사무소의 추리 기법에 관한 정보는 제3자에게 누설할 수 없습니다.
       </p>
       
       <div class="form-group" style="margin-top:4px;">
-        <label><input type="checkbox" id="nda-check"> 위의 기밀 유지 조항을 숙지하였으며 이에 동의합니다.</label>
+        <label><input type="checkbox" id="nda-check"> <span data-i18n="nda_agree">위의 기밀 유지 조항을 숙지하였으며 이에 동의합니다.</span></label>
       </div>
 
       <div class="form-group">
-        <label>열람자 친필 서명 (손가락/마우스)</label>
+        <label data-i18n="nda_sig_label">열람자 친필 서명 (손가락/마우스)</label>
         <canvas id="nda-canvas" class="signature-pad" style="height:70px;"></canvas>
       </div>
 
-      <p class="error-text" id="nda-err">동의 체크와 서명이 완료되어야 서약이 승인됩니다.</p>
-      <button class="btn-nav" onclick="verifyNdaAndShowArchive()">서약 승인 및 보고서 보관함 열람 ▸</button>
-      <button class="btn-nav" style="background:#555;" onclick="closeNdaModal()">닫기</button>
+      <p class="error-text" id="nda-err" data-i18n="nda_err">동의 체크와 서명이 완료되어야 서약이 승인됩니다.</p>
+      <button class="btn-nav" onclick="verifyNdaAndShowArchive()" data-i18n="btn_approve_nda">서약 승인 및 보고서 보관함 열람 ▸</button>
+      <button class="btn-nav" style="background:#555;" onclick="closeNdaModal()" data-i18n="btn_close">닫기</button>
     </div>
   </div>
 
-  <!-- 타인 보고서 보관함 모달 -->
+  <!-- Archive Modal -->
   <div class="modal-overlay" id="archive-modal">
     <div class="modal-content" style="max-width:540px;">
       <h2 style="font-family:'Cinzel'; text-align:center; border-bottom:2px solid var(--ink); padding-bottom:8px;">CONFIDENTIAL ARCHIVES</h2>
-      <div id="archive-list" style="display:flex; flex-direction:column; gap:12px; margin-top:10px;">
-        <!-- 누적된 보고서 목록 -->
-      </div>
-      <button class="btn-nav" onclick="closeArchiveModal()">보관함 닫기</button>
+      <div id="archive-list" style="display:flex; flex-direction:column; gap:12px; margin-top:10px;"></div>
+      <button class="btn-nav" onclick="closeArchiveModal()" data-i18n="btn_close">닫기</button>
     </div>
   </div>
 
-  <!-- 유튜브 BGM 스크립트 (강력한 재생 보장 로직) -->
+  <!-- 다국어 딕셔너리 및 로직 -->
   <script>
-    const YOUTUBE_BGM_ID = "kPJmlzku2NI";
+    let currentLang = 'ko';
+
+    const i18n = {
+      ko: {
+        school_name: "한영외국어고등학교",
+        p1_title: "I. 의뢰인 신원 정보",
+        p1_school_label: "소속 기관",
+        p1_id_label: "의뢰인 학번 (필수)",
+        p1_id_ph: "학번을 입력하십시오",
+        p1_name_label: "의뢰인 성명 (필수)",
+        p1_name_ph: "성명을 입력하십시오",
+        err_1: "모든 신원 정보를 빠짐없이 작성해야 합니다.",
+        btn_next_1: "다음: 장소 및 단서 선택 ▸",
+
+        p2_title: "II. 수사 장소 및 목격 단서",
+        p2_b_label: "1. 건물 선택 (필수)",
+        b_main: "본관", b_west: "서관", b_east: "동관",
+        p2_f_label: "2. 층수 선택 (필수)",
+        p2_g_label: "3. 구분 선택 (필수)",
+        g_female: "여자 화장실", g_male: "남자 화장실",
+        p2_clue_label: "4. 현장 목격 단서 (필수)",
+        clue_opt_default: "-- 발견된 단서를 선택하십시오 --",
+        clue_opt_1: "휴지심만 덩그러니 남음",
+        clue_opt_2: "잔여량이 조만간 소진될 것으로 보임",
+        clue_opt_3: "휴지가 거치대에서 무단 이탈함",
+        clue_opt_custom: "기타 (직접 주관식 입력)",
+        custom_clue_ph: "목격한 단서를 직접 적으시오",
+        err_2: "장소 항목들과 단서를 빠짐없이 선택해야 합니다.",
+        btn_next_2: "다음: 사건 경위 & 용의자 ▸",
+
+        p3_title: "III. 사건 경위 및 용의자",
+        p3_detail_label: "사건 상세 경위 진술 (필수)",
+        p3_detail_ph: "어떤 정황으로 휴지 사건이 발생했는지 적으시오...",
+        p3_suspect_label: "유력 의심 용의자 (필수)",
+        suspect_default: "-- 의심 인물을 선택하십시오 --",
+        suspect_1: "쉬는시간 대량 사용 학생",
+        suspect_2: "청소 점검 미이행 관계자",
+        suspect_3: "시험기간 고카페인 중독자",
+        suspect_4: "익명의 휴지 절도범",
+        p3_reason_label: "용의선상 선정 이유 (필수)",
+        p3_reason_ph: "해당 대상을 의심하는 이유를 적으시오...",
+        err_3: "모든 진술 및 용의자 정보를 입력해야 합니다.",
+        btn_next_3: "다음: 서명 및 실링왁스 ▸",
+
+        p4_title: "IV. 기밀 서약 & 실링",
+        p4_sig_label: "의뢰인 친필 서명 (손가락/마우스)",
+        btn_clear: "지우기",
+        p4_wax_label: "밀봉 실링왁스 인장 (클릭)",
+        wax_status_off: "인장이 찍히지 않았습니다",
+        wax_status_on: "밀봉 완료 (221B SEAL)",
+        err_4: "서명과 실링왁스 인장이 모두 필요합니다.",
+        btn_next_4: "스캔 및 셜록 추론 개시 ▸",
+
+        p5_title: "V. 렌즈 스캔 & AI 추리",
+        cam_init: "렌즈 초기화 중...",
+        cam_anal: "카메라 분석 중...",
+        btn_next_5: "최종 탐정 보고서 발급 ▸",
+
+        rep_lbl_client: "의뢰인:",
+        rep_lbl_loc: "수사 장소:",
+        rep_lbl_clue: "현장 단서:",
+        rep_lbl_verdict: "렌즈 스캔 판정:",
+        btn_open_archive: "🔒 수사 보고서 누적 보관함 열람",
+        btn_restart: "새 사건 의뢰하기",
+
+        nda_text: "본 서약서는 221B Baker Street 탐정 사무소의 보안 문서입니다. 누적 기록된 의뢰인들의 수사 기록 및 본 사무소의 추리 기법에 관한 정보는 제3자에게 누설할 수 없습니다.",
+        nda_agree: "위의 기밀 유지 조항을 숙지하였으며 이에 동의합니다.",
+        nda_sig_label: "열람자 친필 서명 (손가락/마우스)",
+        nda_err: "동의 체크와 서명이 완료되어야 서약이 승인됩니다.",
+        btn_approve_nda: "서약 승인 및 보고서 보관함 열람 ▸",
+        btn_close: "닫기",
+
+        arch_loading: "서버에서 사건 기록을 가져오는 중...",
+        arch_empty: "보관된 수사 보고서가 존재하지 않습니다.",
+        arch_lbl_loc: "수사 장소", arch_lbl_suspect: "지목 용의자", arch_lbl_deduction: "셜록 추리", arch_lbl_verdict: "AI 판정"
+      },
+      en: {
+        school_name: "Hanyoung Foreign Language High School",
+        p1_title: "I. CLIENT IDENTIFICATION",
+        p1_school_label: "Institution",
+        p1_id_label: "Student ID (Required)",
+        p1_id_ph: "Enter your student ID",
+        p1_name_label: "Client Full Name (Required)",
+        p1_name_ph: "Enter your name",
+        err_1: "Please fill out all identification fields.",
+        btn_next_1: "Next: Location & Clue ▸",
+
+        p2_title: "II. LOCATION & CLUES",
+        p2_b_label: "1. Select Building (Required)",
+        b_main: "Main Bldg", b_west: "West Bldg", b_east: "East Bldg",
+        p2_f_label: "2. Select Floor (Required)",
+        p2_g_label: "3. Select Division (Required)",
+        g_female: "Women's Restroom", g_male: "Men's Restroom",
+        p2_clue_label: "4. Observed Clue (Required)",
+        clue_opt_default: "-- Select an observed clue --",
+        clue_opt_1: "Empty cardboard roll left behind",
+        clue_opt_2: "Tissue low, running out soon",
+        clue_opt_3: "Tissue roll misplaced from holder",
+        clue_opt_custom: "Other (Specify manually)",
+        custom_clue_ph: "Describe the observed clue",
+        err_2: "Please select all location details and a clue.",
+        btn_next_2: "Next: Case Details & Suspect ▸",
+
+        p3_title: "III. DETAILS & SUSPECT",
+        p3_detail_label: "Case Details Statement (Required)",
+        p3_detail_ph: "Describe how the tissue incident occurred...",
+        p3_suspect_label: "Prime Suspect (Required)",
+        suspect_default: "-- Select a suspect --",
+        suspect_1: "Student hoarding tissue during break",
+        suspect_2: "Cleaning staff skipping inspection",
+        suspect_3: "Over-caffeinated student during exam week",
+        suspect_4: "Anonymous tissue thief",
+        p3_reason_label: "Reason for Suspicion (Required)",
+        p3_reason_ph: "State why you suspect this target...",
+        err_3: "Please provide all statements and suspect details.",
+        btn_next_3: "Next: Signature & Wax Seal ▸",
+
+        p4_title: "IV. NDA & WAX SEAL",
+        p4_sig_label: "Client Signature (Finger/Mouse)",
+        btn_clear: "Clear",
+        p4_wax_label: "Press Wax Seal (Click)",
+        wax_status_off: "Not sealed yet",
+        wax_status_on: "Sealed (221B SEAL)",
+        err_4: "Both signature and wax seal are required.",
+        btn_next_4: "Start Scanning & Deduction ▸",
+
+        p5_title: "V. SCANNING & AI DEDUCTION",
+        cam_init: "Initializing lens...",
+        cam_anal: "Analyzing camera feed...",
+        btn_next_5: "Generate Final Report ▸",
+
+        rep_lbl_client: "Client:",
+        rep_lbl_loc: "Location:",
+        rep_lbl_clue: "Clue:",
+        rep_lbl_verdict: "Lens Verdict:",
+        btn_open_archive: "🔒 Open Confidential Archives",
+        btn_restart: "File New Case",
+
+        nda_text: "This document is a confidential record of 221B Baker Street. You shall not disclose any case archives or detective methodology to third parties.",
+        nda_agree: "I have read and agree to the non-disclosure terms above.",
+        nda_sig_label: "Reviewer Signature (Finger/Mouse)",
+        nda_err: "Agreement and signature are required to proceed.",
+        btn_approve_nda: "Approve NDA & Open Archives ▸",
+        btn_close: "Close",
+
+        arch_loading: "Fetching records from server...",
+        arch_empty: "No confidential reports archived.",
+        arch_lbl_loc: "Location", arch_lbl_suspect: "Suspect", arch_lbl_deduction: "Deduction", arch_lbl_verdict: "Verdict"
+      },
+      es: {
+        school_name: "Escuela Secundaria de Lenguas Extranjeras Hanyoung",
+        p1_title: "I. IDENTIFICACIÓN DEL CLIENTE",
+        p1_school_label: "Institución",
+        p1_id_label: "ID de Estudiante (Obligatorio)",
+        p1_id_ph: "Ingrese su ID de estudiante",
+        p1_name_label: "Nombre Completo (Obligatorio)",
+        p1_name_ph: "Ingrese su nombre",
+        err_1: "Por favor complete todos los campos de identificación.",
+        btn_next_1: "Siguiente: Lugar y Pista ▸",
+
+        p2_title: "II. LUGAR Y PISTAS",
+        p2_b_label: "1. Seleccione Edificio (Obligatorio)",
+        b_main: "Edificio Principal", b_west: "Edificio Oeste", b_east: "Edificio Este",
+        p2_f_label: "2. Seleccione Piso (Obligatorio)",
+        p2_g_label: "3. Seleccione División (Obligatorio)",
+        g_female: "Baño de Mujeres", g_male: "Baño de Hombres",
+        p2_clue_label: "4. Pista Observada (Obligatorio)",
+        clue_opt_default: "-- Seleccione una pista observada --",
+        clue_opt_1: "Solo quedó el tubo de cartón vacío",
+        clue_opt_2: "Poco papel, se agotará pronto",
+        clue_opt_3: "El papel fue retirado del soporte",
+        clue_opt_custom: "Otro (Especificar manualmente)",
+        custom_clue_ph: "Describa la pista observada",
+        err_2: "Seleccione todos los detalles del lugar y una pista.",
+        btn_next_2: "Siguiente: Detalle y Sospechoso ▸",
+
+        p3_title: "III. DETALLES Y SOSPECHOSO",
+        p3_detail_label: "Declaración del Caso (Obligatorio)",
+        p3_detail_ph: "Describa cómo ocurrió el incidente del papel...",
+        p3_suspect_label: "Sospechoso Principal (Obligatorio)",
+        suspect_default: "-- Seleccione un sospechoso --",
+        suspect_1: "Estudiante que acapara papel en el receso",
+        suspect_2: "Personal de limpieza que omitió la revisión",
+        suspect_3: "Estudiante con exceso de cafeína en exámenes",
+        suspect_4: "Ladrón de papel anónimo",
+        p3_reason_label: "Motivo de Sospecha (Obligatorio)",
+        p3_reason_ph: "Indique por qué sospecha de este objetivo...",
+        err_3: "Por favor complete la declaración y el sospechoso.",
+        btn_next_3: "Siguiente: Firma y Sello de Cera ▸",
+
+        p4_title: "IV. ACUERDO Y SELLO DE CERA",
+        p4_sig_label: "Firma del Cliente (Dedo/Mouse)",
+        btn_clear: "Borrar",
+        p4_wax_label: "Presionar Sello de Cera (Clic)",
+        wax_status_off: "Aún no sellado",
+        wax_status_on: "Sellado (221B SEAL)",
+        err_4: "Se requiere tanto la firma como el sello de cera.",
+        btn_next_4: "Iniciar Escaneo y Deducción ▸",
+
+        p5_title: "V. ESCANEO Y DEDUCCIÓN IA",
+        cam_init: "Inicializando lente...",
+        cam_anal: "Analizando transmisión de cámara...",
+        btn_next_5: "Generar Informe Final ▸",
+
+        rep_lbl_client: "Cliente:",
+        rep_lbl_loc: "Lugar:",
+        rep_lbl_clue: "Pista:",
+        rep_lbl_verdict: "Veredicto del Lente:",
+        btn_open_archive: "🔒 Abrir Archivos Confidenciales",
+        btn_restart: "Registrar Nuevo Caso",
+
+        nda_text: "Este documento es un registro confidencial de 221B Baker Street. No revelará los archivos de casos ni la metodología de deducción a terceros.",
+        nda_agree: "He leído y acepto los términos de confidencialidad anteriores.",
+        nda_sig_label: "Firma del Revisor (Dedo/Mouse)",
+        nda_err: "Se requiere la aceptación y la firma para continuar.",
+        btn_approve_nda: "Aprobar Acuerdo y Abrir Archivos ▸",
+        btn_close: "Cerrar",
+
+        arch_loading: "Obteniendo registros del servidor...",
+        arch_empty: "No hay informes confidenciales archivados.",
+        arch_lbl_loc: "Lugar", arch_lbl_suspect: "Sospechoso", arch_lbl_deduction: "Deducción", arch_lbl_verdict: "Veredicto"
+      }
+    };
+
+    function changeLanguage(lang) {
+      currentLang = lang;
+      const dict = i18n[lang];
+
+      document.getElementById("school").value = dict.school_name;
+
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (dict[key]) el.innerText = dict[key];
+      });
+
+      document.querySelectorAll("[data-i18n-ph]").forEach(el => {
+        const key = el.getAttribute("data-i18n-ph");
+        if (dict[key]) el.placeholder = dict[key];
+      });
+
+      if (isWaxStamped) {
+        document.getElementById("wax-status").innerText = dict.wax_status_on;
+      } else {
+        document.getElementById("wax-status").innerText = dict.wax_status_off;
+      }
+    }
+  </script>
+
+  <!-- BGM Script -->
+  <script>
+    const YOUTUBE_BGM_ID = "lb_e3xpkRnw";
     let ytPlayer = null;
     let isBgmPlaying = false;
 
-    // 유튜브 API 스크립트 동적 태그 추가
     const tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
     const firstScriptTag = document.getElementsByTagName('script')[0];
@@ -601,7 +859,6 @@
     }
 
     function onPlayerReady(event) {
-      // 브라우저 재생 정책 회피: 음소거 재생 후 첫 사용자 클릭 시 소리 켜기
       event.target.mute();
       event.target.playVideo();
 
@@ -634,11 +891,8 @@
     }
   </script>
 
-  <!-- 메인 애플리케이션 로직 -->
+  <!-- Main Application Logic -->
   <script>
-    // ==========================================
-    // JSONBin 연동 설정
-    // ==========================================
     const JSONBIN_BIN_ID = "6aa20663ffd5d16053f420f4";
     const JSONBIN_API_KEY = "$2a$10$YhUmu6npt3HeBGzgQEPy5ei80W0DGV1DZWdSKOm10mCkZAGcL8Xeu";
     const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
@@ -646,9 +900,8 @@
     const MODEL_URL = "https://teachablemachine.withgoogle.com/models/FFJ6T1Fe1/";
     let isWaxStamped = false;
     let model, webcam, maxPredictions;
-    let finalScanResult = "판정 중...";
+    let finalScanResult = "Analyzing...";
 
-    // Canvas 관리 (터치 및 마우스 지원)
     const sigCanvas = document.getElementById("sig-canvas");
     const ctx = sigCanvas.getContext("2d");
     let isSigning = false, hasSig = false;
@@ -724,7 +977,7 @@
     function stampWax() {
       isWaxStamped = true;
       document.getElementById("wax-btn").classList.add("stamped");
-      document.getElementById("wax-status").innerText = "밀봉 완료 (221B SEAL)";
+      document.getElementById("wax-status").innerText = i18n[currentLang].wax_status_on;
     }
 
     function toggleCustomClue() {
@@ -770,7 +1023,7 @@
         box.innerHTML = ""; box.appendChild(webcam.canvas);
         window.requestAnimationFrame(loop);
       } catch (e) {
-        alert("카메라 및 모델 로드 중 오류가 발생했습니다.");
+        alert("Error loading camera model.");
       }
     }
 
@@ -785,43 +1038,18 @@
         }
       }
       finalScanResult = `${topClass} (${(topProb * 100).toFixed(0)}%)`;
-      document.getElementById("scan-status").innerText = `실시간 분석: ${finalScanResult}`;
+      document.getElementById("scan-status").innerText = `${i18n[currentLang].cam_anal} ${finalScanResult}`;
       window.requestAnimationFrame(loop);
     }
 
     function createSherlockDeduction(location, clue, details, suspect, reason) {
-      const intros = [
-        `의뢰인이 제시한 사건 정황("${details}")과 현장에서 입수된 핵심 단서인 '${clue}'을 면밀히 대조해 보았네.`,
-        `사건의 본질은 늘 사소해 보이는 단서에 숨어있지. 현장 진술인 "${details}"과 발견된 '${clue}'의 정황을 정밀히 관찰한 결과라네.`,
-        `해당 구역의 사건 경위("${details}") 및 발견 지점의 '${clue}' 상태를 조합했을 때 결코 우연의 산물이 아님이 명백하네.`,
-        `자네가 전해준 진술("${details}") 속에서 눈여겨봐야 할 부분은 단연 현장의 '${clue}'이라네.`,
-        `흥미롭군. 진술된 사건 내용("${details}")과 사건 현장을 메우고 있는 '${clue}'의 흔적은 명확한 연관성을 가리키고 있네.`,
-        `세상은 관찰하지 않는 자들에게 수많은 비밀을 숨기지. 경위 진술("${details}")과 발견된 '${clue}'은 단순한 사고가 아니라네.`
-      ];
-
-      const analyses = [
-        `수사 대상지인 ${location}의 시간대별 통행 동선과 세밀한 관찰 결과를 종합하면, 이 모든 정황은 지목된 [${suspect}]의 미세한 행적 패턴과 일치하고 있네.`,
-        `${location} 현장의 환경적 특성 및 물적 증거의 잔여 형태는 분명 특정 의도를 가진 인물의 소행임을 가리키며, [${suspect}]이(가) 사건 중심에 서 있음을 증명하네.`,
-        `범행이 일어난 ${location}의 구조적 환경을 재구성해보면, 의뢰인이 제기한 [${suspect}]의 행동 패턴과 기막히게 맞아떨어지고 있네.`,
-        `${location} 주변의 유동 인구와 동선을 관찰해 본 결과, [${suspect}]의 최근 행적과 시공간적으로 유의미한 접점이 도출되었네.`,
-        `사건이 발생한 ${location} 구역의 물리적 정황을 분석할수록, 오직 [${suspect}]만이 이 정도의 흔적을 남길 조건에 부합한다네.`,
-        `${location}에서의 이동 동선과 물품의 소진 속도를 기하학적으로 추론해보면, 지목된 [${suspect}]의 소행일 확률이 극도로 높네.`
-      ];
-
-      const conclusions = [
-        `특히 의뢰인이 증언한 의심 사유("${reason}")는 연쇄적인 정황 증거와 결합하여 유력한 논리적 필연성을 제시하고 있네. 불가능을 모두 제외하고 남은 유일한 가능성은 그것이 아무리 뜻밖일지라도 진실이라네.`,
-        `더불어 제기된 용의선상 사유("${reason}")는 단순한 추측을 넘어 관찰에 근거한 명확한 심증을 뒷받침하네. 진실은 언제나 명료하며, 범인은 이 논리적 포위망을 빠져나갈 수 없을 것이네.`,
-        `또한 지목 사유("${reason}")에 나타난 용의자의 행태는 본 사건의 결정적 동기로 작동했음이 분명하네. 나의 오랜 수사 경험으로 미루어볼 때 사건의 전말은 이미 완벽히 입증되었네.`,
-        `의뢰인이 제시한 근거("${reason}") 역시 이 추론을 강력히 수긍하게 만드네. 정황과 논리가 이토록 완벽히 맞물린다면 더 이상의 의문은 사족에 불과할 것이네.`,
-        `용의자로 선정한 근거("${reason}")가 가진 심리학적 인과관계는 매우 뛰어난 관찰이였네. 왓슨, 또 한 건의 명확한 사건 해결이 눈앞에 보이는군.`,
-        `결론적으로 의심 사유("${reason}")에 명시된 행동 양식이 범행의 핵심 고리였음이 증명되었네. 사실 관계는 이미 드러났으니 이제 남은 것은 사후 조치뿐이라네.`
-      ];
-
-      const randI = intros[Math.floor(Math.random() * intros.length)];
-      const randA = analyses[Math.floor(Math.random() * analyses.length)];
-      const randC = conclusions[Math.floor(Math.random() * conclusions.length)];
-
-      return `${randI} ${randA} ${randC}`;
+      if (currentLang === 'en') {
+        return `Upon analyzing the client's statement ("${details}") alongside the critical physical evidence '${clue}', the pattern becomes remarkably clear. Observing the behavioral frequency around ${location}, the timeline directly points toward [${suspect}]. Furthermore, the stated reason for suspicion ("${reason}") aligns logically with my observations. When you eliminate the impossible, whatever remains, however improbable, must be the truth.`;
+      } else if (currentLang === 'es') {
+        return `Al analizar la declaración del cliente ("${details}") junto con la evidencia física crucial '${clue}', el patrón se vuelve extraordinariamente claro. Observando la frecuencia de comportamiento alrededor de ${location}, la cronología apunta directamente a [${suspect}]. Además, el motivo de sospecha expresado ("${reason}") coincide lógicamente con mis observaciones. Una vez descartado lo imposible, lo que queda, por improbable que parezca, debe ser la verdad.`;
+      } else {
+        return `의뢰인이 제시한 사건 정황("${details}")과 현장에서 입수된 핵심 단서인 '${clue}'을 면밀히 대조해 보았네. 수사 대상지인 ${location}의 시간대별 통행 동선과 관찰 결과를 종합하면, 이 모든 정황은 지목된 [${suspect}]의 행적 패턴과 정확히 일치하네. 특히 의뢰인이 증언한 의심 사유("${reason}")는 연쇄적인 정황 증거와 결합하여 유력한 필연성을 제시하네. 불가능을 모두 제외하고 남은 유일한 가능성은 그것이 아무리 뜻밖일지라도 진실이라네.`;
+      }
     }
 
     async function fetchReportsFromServer() {
@@ -833,7 +1061,7 @@
         const data = await res.json();
         return data.record.reports || [];
       } catch (err) {
-        console.error("서버 로드 에러:", err);
+        console.error("Server fetch error:", err);
         return [];
       }
     }
@@ -852,7 +1080,7 @@
           body: JSON.stringify({ reports: currentReports })
         });
       } catch (err) {
-        console.error("서버 저장 에러:", err);
+        console.error("Server save error:", err);
       }
     }
 
@@ -861,15 +1089,23 @@
       document.getElementById("page-5").classList.remove("active");
       document.getElementById("page-6").classList.add("active");
 
-      const b = document.querySelector('input[name="building"]:checked').value;
-      const f = document.querySelector('input[name="floor"]:checked').value;
-      const g = document.querySelector('input[name="gender"]:checked').value;
-      const locationStr = `${b} ${f} ${g}`;
+      const bElem = document.querySelector('input[name="building"]:checked');
+      const bText = bElem.nextElementSibling.innerText;
+      const fText = document.querySelector('input[name="floor"]:checked').value;
+      const gText = document.querySelector('input[name="gender"]:checked').nextElementSibling.innerText;
+      const locationStr = `${bText} ${fText} ${gText}`;
 
-      const clueSel = document.getElementById("clue-select").value;
-      const clueStr = (clueSel === "custom") ? document.getElementById("custom-clue").value : clueSel;
+      const clueSel = document.getElementById("clue-select");
+      let clueStr = "";
+      if (clueSel.value === "custom") {
+        clueStr = document.getElementById("custom-clue").value;
+      } else {
+        clueStr = clueSel.options[clueSel.selectedIndex].text;
+      }
+
       const detailsStr = document.getElementById("case-details").value;
-      const suspectStr = document.getElementById("suspect").value;
+      const suspectSel = document.getElementById("suspect");
+      const suspectStr = suspectSel.options[suspectSel.selectedIndex].text;
       const reasonStr = document.getElementById("suspect-reason").value;
 
       const SherlockAnalysis = createSherlockDeduction(locationStr, clueStr, detailsStr, suspectStr, reasonStr);
@@ -908,14 +1144,15 @@
 
     async function showArchives() {
       const list = document.getElementById("archive-list");
-      list.innerHTML = `<p style="text-align:center; font-size:0.88rem;">서버에서 사건 기록을 가져오는 중...</p>`;
+      const dict = i18n[currentLang];
+      list.innerHTML = `<p style="text-align:center; font-size:0.88rem;">${dict.arch_loading}</p>`;
       document.getElementById("archive-modal").style.display = "flex";
 
       const archives = await fetchReportsFromServer();
       list.innerHTML = "";
 
       if (archives.length === 0) {
-        list.innerHTML = `<p style="text-align:center; font-size:0.88rem; color:#555;">보관된 수사 보고서가 존재하지 않습니다.</p>`;
+        list.innerHTML = `<p style="text-align:center; font-size:0.88rem; color:#555;">${dict.arch_empty}</p>`;
       } else {
         archives.slice().reverse().forEach((item, idx) => {
           const originalIdx = archives.length - idx;
@@ -925,9 +1162,9 @@
                 <span>CASE DOSSIER #${originalIdx} - ${item.client}</span>
                 <span style="font-size:0.7rem; color:#666;">${item.timestamp || ''}</span>
               </div>
-              <div style="margin-top:4px;"><b>수사 장소:</b> ${item.location} | <b>지목 용의자:</b> ${item.culprit}</div>
-              <div style="margin-top:4px; color:#2c2018;"><b>셜록 추리:</b> ${item.analysis}</div>
-              <div style="margin-top:4px;"><b>AI 판정:</b> ${item.verdict}</div>
+              <div style="margin-top:4px;"><b>${dict.arch_lbl_loc}:</b> ${item.location} | <b>${dict.arch_lbl_suspect}:</b> ${item.culprit}</div>
+              <div style="margin-top:4px; color:#2c2018;"><b>${dict.arch_lbl_deduction}:</b> ${item.analysis}</div>
+              <div style="margin-top:4px;"><b>${dict.arch_lbl_verdict}:</b> ${item.verdict}</div>
             </div>`;
         });
       }

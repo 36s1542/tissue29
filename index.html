@@ -149,11 +149,11 @@
 
     .signature-pad {
       width: 100%;
-      height: 90px;
-      background: rgba(255, 255, 255, 0.5);
+      height: 100px;
+      background: rgba(255, 255, 255, 0.6);
       border: 1px dashed var(--ink);
       cursor: crosshair;
-      touch-action: none;
+      touch-action: none; /* 터치 드래그 시 화면 스크롤 방지 */
     }
 
     .wax-seal-container {
@@ -213,7 +213,6 @@
 
     .webcam-box canvas { width: 100% !important; height: 100% !important; object-fit: cover; }
 
-    /* 보고서 양식 및 가독성 개선 */
     .report-paper {
       background: #d8c3a5;
       border: 2px solid var(--ink);
@@ -284,7 +283,6 @@
 
     .error-text { color: var(--wax-red); font-size: 0.8rem; display: none; }
 
-    /* 비밀유지서약 모달 */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -429,7 +427,7 @@
         <span>04/05</span>
       </div>
       <div class="form-group">
-        <label>의뢰인 친필 서명</label>
+        <label>의뢰인 친필 서명 (손가락/마우스)</label>
         <canvas id="sig-canvas" class="signature-pad"></canvas>
         <button class="btn-clear" style="align-self:flex-end; background:none; border:none; text-decoration:underline; cursor:pointer;" onclick="clearSignature()">지우기</button>
       </div>
@@ -470,7 +468,6 @@
           <div class="report-row"><span class="label">현장 단서:</span><span class="val" id="rep-clue">-</span></div>
         </div>
 
-        <!-- 정교한 셜록 홈즈 스타일 추리문 -->
         <div class="sherlock-deduction-box">
           <h4>SHERLOCK HOLMES DEDUCTION</h4>
           <p id="rep-deduction-text">추리 분석 중...</p>
@@ -510,7 +507,7 @@
       </div>
 
       <div class="form-group">
-        <label>열람자 친필 서명</label>
+        <label>열람자 친필 서명 (손가락/마우스)</label>
         <canvas id="nda-canvas" class="signature-pad" style="height:70px;"></canvas>
       </div>
 
@@ -537,7 +534,7 @@
     let model, webcam, maxPredictions;
     let finalScanResult = "판정 중...";
 
-    // Canvas 관리 (서명)
+    // Canvas 관리 (터치 및 마우스 완벽 지원)
     const sigCanvas = document.getElementById("sig-canvas");
     const ctx = sigCanvas.getContext("2d");
     let isSigning = false, hasSig = false;
@@ -551,25 +548,65 @@
         c.width = c.offsetWidth;
         c.height = c.offsetHeight;
       });
-      ctx.lineWidth = 2; ctx.strokeStyle = "#1a1412";
-      ndaCtx.lineWidth = 2; ndaCtx.strokeStyle = "#8b0000";
+      ctx.lineWidth = 2.5; ctx.strokeStyle = "#1a1412"; ctx.lineCap = "round";
+      ndaCtx.lineWidth = 2.5; ndaCtx.strokeStyle = "#8b0000"; ndaCtx.lineCap = "round";
     }
     window.addEventListener("load", initCanvases);
+    window.addEventListener("resize", initCanvases);
 
     function getPos(e, canvas) {
       const rect = canvas.getBoundingClientRect();
-      const cx = e.touches ? e.touches[0].clientX : e.clientX;
-      const cy = e.touches ? e.touches[0].clientY : e.clientY;
-      return { x: cx - rect.left, y: cy - rect.top };
+      let clientX, clientY;
+      
+      if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
+      }
+      
+      return {
+        x: clientX - rect.left,
+        y: clientY - rect.top
+      };
     }
 
-    sigCanvas.addEventListener("mousedown", (e) => { isSigning = true; const p = getPos(e, sigCanvas); ctx.beginPath(); ctx.moveTo(p.x, p.y); });
-    sigCanvas.addEventListener("mousemove", (e) => { if (isSigning) { const p = getPos(e, sigCanvas); ctx.lineTo(p.x, p.y); ctx.stroke(); hasSig = true; } });
-    window.addEventListener("mouseup", () => isSigning = false);
+    function setupCanvasListeners(canvas, context, setHasSig, getIsSigning, setIsSigning) {
+      const startDraw = (e) => {
+        e.preventDefault();
+        setIsSigning(true);
+        const p = getPos(e, canvas);
+        context.beginPath();
+        context.moveTo(p.x, p.y);
+      };
 
-    ndaCanvas.addEventListener("mousedown", (e) => { isNdaSigning = true; const p = getPos(e, ndaCanvas); ndaCtx.beginPath(); ndaCtx.moveTo(p.x, p.y); });
-    ndaCanvas.addEventListener("mousemove", (e) => { if (isNdaSigning) { const p = getPos(e, ndaCanvas); ndaCtx.lineTo(p.x, p.y); ndaCtx.stroke(); hasNdaSig = true; } });
-    window.addEventListener("mouseup", () => isNdaSigning = false);
+      const moveDraw = (e) => {
+        if (!getIsSigning()) return;
+        e.preventDefault();
+        const p = getPos(e, canvas);
+        context.lineTo(p.x, p.y);
+        context.stroke();
+        setHasSig(true);
+      };
+
+      const endDraw = (e) => {
+        setIsSigning(false);
+      };
+
+      // 마우스 이벤트
+      canvas.addEventListener("mousedown", startDraw);
+      canvas.addEventListener("mousemove", moveDraw);
+      window.addEventListener("mouseup", endDraw);
+
+      // 터치 이벤트 (스마트폰/패드 지원)
+      canvas.addEventListener("touchstart", startDraw, { passive: false });
+      canvas.addEventListener("touchmove", moveDraw, { passive: false });
+      canvas.addEventListener("touchend", endDraw);
+    }
+
+    setupCanvasListeners(sigCanvas, ctx, (val) => hasSig = val, () => isSigning, (val) => isSigning = val);
+    setupCanvasListeners(ndaCanvas, ndaCtx, (val) => hasNdaSig = val, () => isNdaSigning, (val) => isNdaSigning = val);
 
     function clearSignature() { ctx.clearRect(0, 0, sigCanvas.width, sigCanvas.height); hasSig = false; }
     function stampWax() {
@@ -656,7 +693,6 @@
       const suspectStr = document.getElementById("suspect").value;
       const reasonStr = document.getElementById("suspect-reason").value;
 
-      // 진지한 셜록 홈즈 스타일의 통합 논리 추리문 생성
       const SherlockAnalysis = `
         의뢰인이 제출한 정황("${detailsStr}")과 현장에서 발견된 단서인 '${clueStr}'을 종합적으로 검토해 볼 때, 본 사건은 단순한 물품 소진이 아닌 명확한 의도와 패턴을 가진 행동입니다. 수사 대상 지역인 ${locationStr}의 동선과 시간대별 사용량을 정밀 분석한 결과, 유력한 용의자로 지목된 [${suspectStr}]의 행적과 완벽하게 일치합니다. 의뢰인이 제기한 선정 사유("${reasonStr}")는 관찰에 기반한 매우 타당한 근거를 제공하며, 관찰된 정황 증거와 물리학적 정황상 해당 인물이 본 사건의 주요 원인임을 가리키고 있습니다. 불가능을 모두 제외하고 남은 유일한 가능성은 그것이 아무리 뜻밖일지라도 진실입니다.
       `;
@@ -668,7 +704,6 @@
       document.getElementById("rep-verdict").innerText = finalScanResult;
       document.getElementById("rep-sig-img").src = sigCanvas.toDataURL();
 
-      // localStore 누적 저장
       const newReport = {
         client: `${document.getElementById("student-id").value} ${document.getElementById("student-name").value}`,
         location: locationStr,
@@ -681,7 +716,6 @@
       localStorage.setItem("sherlock_reports", JSON.stringify(archives));
     }
 
-    // 모달 관리
     function openNdaModal() { document.getElementById("nda-modal").style.display = "flex"; setTimeout(initCanvases, 100); }
     function closeNdaModal() { document.getElementById("nda-modal").style.display = "none"; }
     function closeArchiveModal() { document.getElementById("archive-modal").style.display = "none"; }

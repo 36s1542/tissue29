@@ -529,6 +529,13 @@
   </div>
 
   <script>
+    // ==========================================
+    // JSONBin 연동 설정 (발급받은 키 입력 완료)
+    // ==========================================
+    const JSONBIN_BIN_ID = "6aa20663ffd5d16053f420f4";
+    const JSONBIN_API_KEY = "$2a$10$YhUmu6npt3HeBGzgQEPy5ei80W0DGV1DZWdSKOm10mCkZAGcL8Xeu";
+    const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
+
     const MODEL_URL = "https://teachablemachine.withgoogle.com/models/FFJ6T1Fe1/";
     let isWaxStamped = false;
     let model, webcam, maxPredictions;
@@ -675,7 +682,6 @@
       window.requestAnimationFrame(loop);
     }
 
-    // 완전히 다양하게 랜덤 조합되는 셜록 홈즈 추리 알고리즘
     function createSherlockDeduction(location, clue, details, suspect, reason) {
       const intros = [
         `의뢰인이 제시한 사건 정황("${details}")과 현장에서 입수된 핵심 단서인 '${clue}'을 면밀히 대조해 보았네.`,
@@ -711,7 +717,41 @@
       return `${randI} ${randA} ${randC}`;
     }
 
-    function generateReport() {
+    // JSONBin 서버에서 전체 데이터 불러오기
+    async function fetchReportsFromServer() {
+      try {
+        const res = await fetch(JSONBIN_URL + "/latest", {
+          method: "GET",
+          headers: { "X-Master-Key": JSONBIN_API_KEY }
+        });
+        const data = await res.json();
+        return data.record.reports || [];
+      } catch (err) {
+        console.error("서버 로드 에러:", err);
+        return [];
+      }
+    }
+
+    // JSONBin 서버에 새 데이터 업데이트하기
+    async function saveReportToServer(newReport) {
+      try {
+        const currentReports = await fetchReportsFromServer();
+        currentReports.push(newReport);
+
+        await fetch(JSONBIN_URL, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Master-Key": JSONBIN_API_KEY
+          },
+          body: JSON.stringify({ reports: currentReports })
+        });
+      } catch (err) {
+        console.error("서버 저장 에러:", err);
+      }
+    }
+
+    async function generateReport() {
       if (webcam) webcam.stop();
       document.getElementById("page-5").classList.remove("active");
       document.getElementById("page-6").classList.add("active");
@@ -727,7 +767,6 @@
       const suspectStr = document.getElementById("suspect").value;
       const reasonStr = document.getElementById("suspect-reason").value;
 
-      // 무작위로 매번 다르게 조합되는 진지한 추리문
       const SherlockAnalysis = createSherlockDeduction(locationStr, clueStr, detailsStr, suspectStr, reasonStr);
 
       document.getElementById("rep-client").innerText = `${document.getElementById("student-id").value} ${document.getElementById("student-name").value}`;
@@ -737,7 +776,6 @@
       document.getElementById("rep-verdict").innerText = finalScanResult;
       document.getElementById("rep-sig-img").src = sigCanvas.toDataURL();
 
-      // localStorage 누적 저장 로직 강화
       const newReport = {
         client: `${document.getElementById("student-id").value} ${document.getElementById("student-name").value}`,
         location: locationStr,
@@ -747,16 +785,8 @@
         timestamp: new Date().toLocaleString("ko-KR")
       };
 
-      let archives = [];
-      try {
-        const stored = localStorage.getItem("sherlock_reports");
-        if (stored) archives = JSON.parse(stored);
-      } catch (e) {
-        archives = [];
-      }
-      
-      archives.push(newReport);
-      localStorage.setItem("sherlock_reports", JSON.stringify(archives));
+      // 온라인 저장소(JSONBin)로 데이터 전송
+      await saveReportToServer(newReport);
     }
 
     function openNdaModal() { document.getElementById("nda-modal").style.display = "flex"; setTimeout(initCanvases, 100); }
@@ -772,22 +802,17 @@
       showArchives();
     }
 
-    function showArchives() {
+    async function showArchives() {
       const list = document.getElementById("archive-list");
+      list.innerHTML = `<p style="text-align:center; font-size:0.88rem;">서버에서 사건 기록을 가져오는 중...</p>`;
+      document.getElementById("archive-modal").style.display = "flex";
+
+      const archives = await fetchReportsFromServer();
       list.innerHTML = "";
-      
-      let archives = [];
-      try {
-        const stored = localStorage.getItem("sherlock_reports");
-        if (stored) archives = JSON.parse(stored);
-      } catch (e) {
-        archives = [];
-      }
 
       if (archives.length === 0) {
         list.innerHTML = `<p style="text-align:center; font-size:0.88rem; color:#555;">보관된 수사 보고서가 존재하지 않습니다.</p>`;
       } else {
-        // 최근 저장된 보고서부터 역순으로 누적 출력
         archives.slice().reverse().forEach((item, idx) => {
           const originalIdx = archives.length - idx;
           list.innerHTML += `
@@ -802,7 +827,6 @@
             </div>`;
         });
       }
-      document.getElementById("archive-modal").style.display = "flex";
     }
   </script>
 </body>
